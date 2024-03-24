@@ -40,7 +40,7 @@ def validate_block(block_model: BaseModel):
                 # Validate the selected part of the block with the provided block model
                 block_model.parse_obj(block_part.dict())
                 
-                # Call the decorated function with the validated block part
+                # Call the decorated function passing the whole object if the validation is successful
                 return func(block_data, *args, **kwargs)
             except Exception as e:
                 print(f"Error validating or parsing block data: {e}")
