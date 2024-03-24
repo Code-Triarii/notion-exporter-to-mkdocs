@@ -2,8 +2,10 @@ import os
 import argparse
 from notion_client import Client
 from notion_client import APIResponseError
-from m_search.notion_blocks import get_all_children_blocks, get_block_type
+# from m_search.notion_blocks import get_all_children_blocks, get_block_type
+from m_search.notion_blocks import fetch_and_process_block_hierarchy, fetch_block_details
 from m_aux.outputs import prepare_output_folder
+from m_aux.pretty_print import pretty_print
 
 def main():
     # Parse command line arguments
@@ -35,11 +37,10 @@ def main():
 
     # Prepare the output folder
     prepare_output_folder(args.outputs_dir)
-    
+
     # Handle commands
-    blocks = get_all_children_blocks(notion,args.page_id)
-    for block in blocks:
-        print(get_block_type(block))
+    blocks = fetch_and_process_block_hierarchy(notion, args.page_id)
+    pretty_print(blocks)
     
 
 if __name__ == "__main__":

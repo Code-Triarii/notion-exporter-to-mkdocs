@@ -4,10 +4,10 @@ import json
 
 def pretty_print(obj, label:str=None):
     """
-    Pretty prints the input object. Supports dictionaries, valid JSON strings, and other objects by converting them to strings.
+    Pretty prints the input object. Supports dictionaries, valid JSON strings, lists of dictionaries, and other objects by converting them to strings.
     
     Parameters:
-    - obj: The object to print. Can be a dict, a JSON string, or any object.
+    - obj: The object to print. Can be a dict, a JSON string, a list of dicts, or any object.
     - label (optional): A label to print before the object. The label will be printed in yellow.
     """
     # Define ANSI color codes for yellow text and reset
@@ -21,6 +21,9 @@ def pretty_print(obj, label:str=None):
     # Check the type of obj and handle accordingly
     if isinstance(obj, dict):
         # Object is a dictionary, convert to JSON string for pretty printing
+        print(json.dumps(obj, indent=2))
+    elif isinstance(obj, list) and all(isinstance(i, dict) for i in obj):
+        # Object is a list of dictionaries, convert each dictionary to JSON string for pretty printing
         print(json.dumps(obj, indent=2))
     elif isinstance(obj, str):
         try:
