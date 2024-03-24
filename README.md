@@ -5,88 +5,58 @@
  -->
 
 <!-- PROJECT LOGO -->
-# 📝 Project Name
-
-[![contributors-shield]][contributors-url]
-[![forks-shield]][forks-url]
-[![stars-shield]][stars-url]
-[![issues-shield]][issues-url]
-[![license-shield]][license-url]
+# 📝 Notion Wiki exporter to MkDocs
 
 <!-- TECNOLOGIES -->
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Selenium](https://img.shields.io/badge/Selenium-43B02A?style=for-the-badge&logo=Selenium&logoColor=white)
-![Brave](https://img.shields.io/badge/Brave-FB542B?style=for-the-badge&logo=Brave&logoColor=white)
-![Chromium](https://img.shields.io/badge/Chromium-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. In purus nulla, consectetur nec justo id, mattis venenatis mi. Suspendisse potenti. Donec et tempus libero, in aliquam lectus. Sed volutpat, eros sit amet vulputate auctor, sem enim lacinia arcu, ac porta dolor neque a mi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse lacinia, quam quis vestibulum rutrum, justo elit bibendum magna, quis dapibus augue diam in lorem. Phasellus tristique vitae leo id sagittis.
+This project aims to provide an easy way for migrating Notion Wikis from your organization to MkDocs. 
+We had a use case in which we were needing to migrate all the content that we have been generating in our Notion wiki to other system/platform.
+Since MkDocs is extending as powerful solution for managing wikis, we decided to give it a try thinking always with the **automation first mindset**.
 
-[View Demo](#) · [Report Bug](PROJECT_URL_TO_REPLACE/issues) · [Request Feature](PROJECT_URL_TO_REPLACE/issues)
+[View Demo](#) · [Report Bug](https://github.com/Code-Triarii/notion-exporter-to-mkdocs/issues) · [Request Feature](https://github.com/Code-Triarii/notion-exporter-to-mkdocs/issues)
 </div>
 
 > [!CAUTION]
 > Change description Lorem ipsum for the project information
 
-> [!NOTE]
-> Do not forget to change **PROJECT_URL_TO_REPLACE** with the actual URL of the project.
-
-> [!NOTE]
-> Do not forget to edit the following links when creating the project from the template.
-
 <!-- TABLE OF CONTENTS -->
 
 
 ## 📚 Table of contents
-   * [Purpose](#-purpose)
-   * [Architecture](#-architecture)
-      * [Components](#components)
-   * [Installation and Execution](#-installation-and-execution)
-      * [Prerequisites](#-prerequisites)
-      * [Installation](#-installation)
-         * [Local-ennvironment](#local-environment)
-         * [Docker-environment](#docker-environment)
-      * [Usage](#-usage)
-   * [Roadmap](#-roadmap)
-   * [Contributing](#-contributing)
-   * [License](#-license)
-   * [Contact](#-contact)
-   * [Acknowledgments](#-acknowledgments)
+- [📝 Notion Wiki exporter to MkDocs](#-notion-wiki-exporter-to-mkdocs)
+  - [📚 Table of contents](#-table-of-contents)
+  - [🚧 Solution Architecture](#-solution-architecture)
+    - [Components](#components)
+  - [🚀 Installation and Execution](#-installation-and-execution)
+    - [🔨 Prerequisites](#-prerequisites)
+    - [🔧 Installation](#-installation)
+      - [Local environment](#local-environment)
+      - [Docker environment](#docker-environment)
+    - [💼 Usage](#-usage)
+  - [Local development](#local-development)
+  - [📍 Features and roadmap](#-features-and-roadmap)
+  - [📎 Contributing](#-contributing)
+  - [📃 License](#-license)
+  - [👥 Contact](#-contact)
+  - [References](#references)
+  - [🔍 Acknowledgments](#-acknowledgments)
 
 <!--te-->
 
-<!-- PROJECT DETAILS -->
-## 💡 Purpose
-
-> [!IMPORTANT]
-> Do not forget to add a picture about the Project and delete this label
-<!-- Template picture
-<div align="center">
-![Purpose](docs/img/example.png)
-</div>
--->
-
-> [!CAUTION]
-> Change description Lorem ipsum for the Purpose
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. In purus nulla, consectetur nec justo id, mattis venenatis mi. Suspendisse potenti. Donec et tempus libero, in aliquam lectus. Sed volutpat, eros sit amet vulputate auctor, sem enim lacinia arcu.
-
-## 🚧 Architecture
+## 🚧 Solution Architecture
 
 > [!IMPORTANT]
 > Do not forget to change the Architecture picture/diagram and delete the label
 
 ![Architecture](./docs/img/architecture.png)
 
----
-#### Components
+### Components
 
-* `CLI`: All the files in this project.
-  * `main.py`: Main handler that orchestrates
-  * `dispatcher.py`: Dispatches services
-* `API Server`: serves the responses to CLI Requests. The related project can be located [TOEDIT: HERE](https://example.com)
 
-[🔝 Back to top](#-project-name)
+
+[🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 ## 🚀 Installation and Execution
 
@@ -94,18 +64,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. In purus nulla, consect
 
 - Docker
 - Python 3.10+
-- Node 19+
-- Selenium, BeautifulSoup, undetected_chromedriver
-- Brave Browser & Compatible WebDriver (Chromedriver/Geckodriver)
 
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 ### 🔧 Installation
-
-* npm:
-  ```sh
-  npm install npm@latest -g
-  ```
 
 #### Local environment
 
@@ -125,16 +87,21 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. In purus nulla, consect
 #### Docker environment
 
 Install `Docker Engine`. Visit [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/) for more information.
+
 1. Build docker image:
+
 ```bash
-docker build -t <image_name>:<tag> .
-```
-1. Run docker image:
-```bash
-docker run -it --name <container_name> -p <ports...> -v <volumes...> <image_name>:<tag>
+docker build . -t notion-exporter:1.0
 ```
 
-[🔝 Back to top](#-project-name)
+
+2. Run docker image:
+
+```bash
+docker run -it --name notion-exporter --rm -v $(pwd):/app --user $(id -u):$(id -g)
+```
+
+[🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- USAGE EXAMPLES -->
 ### 💼 Usage
@@ -148,26 +115,38 @@ docker run -it --name <container_name> -p <ports...> -v <volumes...> <image_name
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- GETTING STARTED -->
+## Local development
+
+For quick development set-up leveraging Docker, you can use the build image and run it eternally:
+
+```bash
+docker run -it --name notion-exporter --rm -v $(pwd):/app --user $(id -u):$(id -g) -e NOTION_TOKEN="" --entrypoint sh notion-exporter:1.0
+```
+
+If you need to install additional dependencies, you can access the container in a different terminal with `root` permissions:
+
+```bash
+docker exec -it -u 0:0 notion-exporter sh
+```
+
+This way you would be able to develop without having to concern about dependencies installation in your host system, testing and breaking as you like.
 
 <!-- ROADMAP -->
-## 📍 Roadmap
+## 📍 Features and roadmap
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [x] English
-    - [ ] Spanish
+- Functionality:
+- [x] Export Notion wiki.
+- [ ] Parametrized execution for reusability.
+- Deployment:  
+  - [ ] Bundle automation in Docker image definition.
+  - [ ] Prepare automation to deploy in kubernetes cluster with Helm.
 
-See the [open issues](PROJECT_URL_TO_REPLACE/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Code-Triarii/notion-exporter-to-mkdocs/issues) for a full list of proposed features (and known issues).
 
-For a more detailed understanding of the project progress, check the <a href="docs/CHANGELOG.md">CHANGELOG</a>
-
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- CONTRIBUTING -->
 ## 📎 Contributing
@@ -191,14 +170,14 @@ If you have a suggestion that would make this better, please fork the repo and c
    ```
 5. Open a Pull Request
 
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- LICENSE -->
 ## 📃 License
 
-Distributed under the `TOEDIT: LICENSE_TYPE_TO_REPLACE` License. See `LICENSE` for more information.
+Distributed under the `Apache2.0` License. See [LICENSE](./LICENSE) for more information.
 
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- CONTACT -->
 ## 👥 Contact
@@ -221,48 +200,23 @@ Do not skip it, you will like it :smirk: :smirk: :smirk: :+1:
 
 Don't forget to give the project a star if you liked it! Thanks again! :star2: :yellow_heart:
 
-[🔝 Back to top](#-project-name)
+[🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
+
+## References
+
+- [Notion API Reference](https://developers.notion.com/reference/intro) - Giving us the details for executing the required queries.
+- [Working with Notion Page content - API](https://developers.notion.com/docs/working-with-page-content)
 
 <!-- ACKNOWLEDGMENTS -->
 ## 🔍 Acknowledgments
 
 :100: :100: :100: For those that are curious about some of the resources or utilities and for sure thanking and giving credit to authors, we provide you a list of the most interesting ones (in our understanding) :100: :100: :100:
 
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+- [Notion](https://www.notion.so/c2433b9a8ff840f398c7410b3acbefd0?pvs=66)
+- [MkDocs](https://www.mkdocs.org/)
+- [Postman](https://www.postman.com/) - For interacting with Notion API.
+- [Docker](https://www.docker.com/) - For making our work efficient.
+- [Python](https://www.python.org/) - For enabling our team to produce our scripts and automations.
+- [Notion SDK for Python](https://pypi.org/project/notion-client/)
 
-[🔝 Back to top](#-project-name)
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: PROJECT_URL_TO_REPLACE/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: PROJECT_URL_TO_REPLACE/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: PROJECT_URL_TO_REPLACE/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: PROJECT_URL_TO_REPLACE/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: PROJECT_URL_TO_REPLACE/blob/master/LICENSE
-
-<!-- SOCIAL MEDIA -->
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=gray
-[linkedin-url]: https://example.com
-
-[youtube-shield]: https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white
-[youtube-url]: https://www.youtube.com/@CodeTriariiSM
-
-[instagram-shield]: https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&colorB=pink
-[instagram-url]: https://www.instagram.com/codetriariismig/
-
-[twitter-shield]: https://img.shields.io/twitter/follow/codetriariism
-
-<!-- PROJECT RELATED -->
-[product-brand-image]: docs/img/main.png
+[🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
