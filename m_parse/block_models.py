@@ -1,5 +1,7 @@
+from typing import Any, List, Optional
+
 from pydantic import BaseModel, Field
-from typing import List, Optional, Any
+
 
 class RichText(BaseModel):
     type: str
@@ -8,12 +10,15 @@ class RichText(BaseModel):
     plain_text: str
     href: Optional[str]
 
+
 class ParagraphBlock(BaseModel):
     rich_text: List[RichText]
     color: str
 
+
 class ChildPageBlock(BaseModel):
     title: str
+
 
 class Block(BaseModel):
     object: str

@@ -1,9 +1,10 @@
+from m_config.notion_client import notion_client
 from m_parse.block_models import Block
 from m_parse.markdown_processing import *
 
+
 def dispatch_block_parsing(block_data: dict):
-    """
-    Dynamically dispatches block parsing based on the block type.
+    """Dynamically dispatches block parsing based on the block type.
 
     This function dynamically selects and invokes a parsing function specific to the block type
     indicated in the `block_data`. It relies on consistent naming conventions between the block type
@@ -40,7 +41,7 @@ def dispatch_block_parsing(block_data: dict):
         validated_block = Block.parse_obj(block_data)
         parse_func_name = f"parse_{validated_block.type}"
         parse_func = globals().get(parse_func_name)
-        
+
         if parse_func and getattr(validated_block, validated_block.type):
             return parse_func(getattr(validated_block, validated_block.type))
         else:
@@ -49,15 +50,13 @@ def dispatch_block_parsing(block_data: dict):
         print(f"Error validating or parsing block data: {e}")
 
 
-
 def dispatch_blocks_parsing(blocks_data: list):
-    """
-    Dispatches the parsing of a list of blocks and aggregates the results, handling both
-    single blocks and lists of blocks as return values from parsing functions.
-    
+    """Dispatches the parsing of a list of blocks and aggregates the results, handling both single
+    blocks and lists of blocks as return values from parsing functions.
+
     Parameters:
     - blocks_data (list): A list of block data dictionaries to be parsed.
-    
+
     Returns:
     - A list of all processed blocks returned by their respective parsing functions,
       aggregated into a single list regardless of whether individual parsing functions
@@ -66,7 +65,7 @@ def dispatch_blocks_parsing(blocks_data: list):
     processed_blocks = []
     for block_data in blocks_data:
         result = dispatch_block_parsing(block_data)
-        
+
         # Check if the parsing function returned a list of blocks or a single block
         # and append accordingly
         if isinstance(result, list):
@@ -75,4 +74,3 @@ def dispatch_blocks_parsing(blocks_data: list):
             processed_blocks.append(result)
 
     return processed_blocks
-

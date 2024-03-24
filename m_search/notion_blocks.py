@@ -1,10 +1,9 @@
 """Auxiliary functions to work with Notion API blocks."""
-from notion_client import Client
-
 from m_aux.pretty_print import pretty_print
+from m_config.notion_client import notion_client
 
 
-def fetch_and_process_block_hierarchy(notion_client, root_block_id):
+def fetch_and_process_block_hierarchy(root_block_id):
     """Fetches a block by its ID and processes its hierarchy, including all nested children.
 
     Parameters:
@@ -24,7 +23,7 @@ def fetch_and_process_block_hierarchy(notion_client, root_block_id):
         - parent_hierarchy: The accumulated parent hierarchy for the current block.
         """
         # Fetch the current block's details (assuming a function or method exists to do this)
-        current_block = fetch_block_details(notion_client, block_id)
+        current_block = fetch_block_details(block_id)
         if not current_block:
             return
 
@@ -36,7 +35,7 @@ def fetch_and_process_block_hierarchy(notion_client, root_block_id):
 
         # If the block has children, process each child
         if current_block.get("has_children", False):
-            child_blocks = get_all_children_blocks(notion_client, block_id)
+            child_blocks = get_all_children_blocks(block_id)
             for child in child_blocks:
                 # Construct new parent hierarchy for the child
                 new_parent_hierarchy = parent_hierarchy.copy()
@@ -80,7 +79,7 @@ def add_parent_hierarchy(block, parent_hierarchy=[]):
         block[key] = parent_info
 
 
-def get_all_children_blocks(notion_client: Client, page_id: str):
+def get_all_children_blocks(page_id: str):
     """Get all child blocks of a given block (page_id) considering pagination.
 
     Parameters:
@@ -103,7 +102,7 @@ def get_all_children_blocks(notion_client: Client, page_id: str):
     return all_blocks
 
 
-def fetch_block_details(notion_client, block_id):
+def fetch_block_details(block_id):
     """Fetches the details of a block given its ID. Placeholder for actual implementation.
 
     Parameters:

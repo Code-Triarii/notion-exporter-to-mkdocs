@@ -1,10 +1,9 @@
 import argparse
 import os
 
-from notion_client import APIResponseError, Client
-
 from m_aux.outputs import prepare_output_folder
 from m_aux.pretty_print import pretty_print
+from m_config.notion_client import notion_client, set_log_level
 from m_parse.dispatch import dispatch_blocks_parsing
 
 # from m_search.notion_blocks import get_all_children_blocks, get_block_type
@@ -58,10 +57,7 @@ def main():
     print(args.__dict__)
 
     # Initialize Notion client with token and set log level
-    notion_token = os.environ.get("NOTION_TOKEN")
-    notion = Client(auth=notion_token, log_level=args.log_level)
-    # Here you would set the log level for the Notion client based on args.log_level
-    # Notion client setup code to apply log level goes here (depends on the client's capabilities)
+    set_log_level(args.log_level)
 
     # Prepare the output folder
     prepare_output_folder(args.outputs_dir)
@@ -69,7 +65,8 @@ def main():
     # Handle commands
     # block_content = fetch_block_details(notion, args.page_id)
     # pretty_print(block_content)
-    children_blocks = get_all_children_blocks(notion, args.page_id)
+    children_blocks = get_all_children_blocks(args.page_id)
+    pretty_print(children_blocks)
     processed_blocks = dispatch_blocks_parsing(children_blocks)
     pretty_print(processed_blocks)
     # pretty_print(children_blocks)
