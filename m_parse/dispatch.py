@@ -52,17 +52,27 @@ def dispatch_block_parsing(block_data: dict):
 
 def dispatch_blocks_parsing(blocks_data: list):
     """
-    Dispatches the parsing of a list of blocks and aggregates the results.
+    Dispatches the parsing of a list of blocks and aggregates the results, handling both
+    single blocks and lists of blocks as return values from parsing functions.
     
     Parameters:
     - blocks_data (list): A list of block data dictionaries to be parsed.
     
     Returns:
-    - A list of all processed blocks returned by their respective parsing functions.
+    - A list of all processed blocks returned by their respective parsing functions,
+      aggregated into a single list regardless of whether individual parsing functions
+      return a single block or a list of blocks.
     """
     processed_blocks = []
     for block_data in blocks_data:
-        processed_block = dispatch_block_parsing(block_data)
-        if processed_block is not None:
-            processed_blocks.append(processed_block)
+        result = dispatch_block_parsing(block_data)
+        
+        # Check if the parsing function returned a list of blocks or a single block
+        # and append accordingly
+        if isinstance(result, list):
+            processed_blocks.extend(result)
+        elif result is not None:
+            processed_blocks.append(result)
+
     return processed_blocks
+
