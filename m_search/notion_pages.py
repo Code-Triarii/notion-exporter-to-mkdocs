@@ -1,4 +1,4 @@
-"""Auxiliaryy functions for fetching Notion pages."""
+"""Auxiliary functions for fetching Notion pages."""
 
 
 def fetch_page_details(notion_client, page_id):
