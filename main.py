@@ -5,6 +5,7 @@ from notion_client import APIResponseError, Client
 
 from m_aux.outputs import prepare_output_folder
 from m_aux.pretty_print import pretty_print
+from m_parse.dispatch import dispatch_blocks_parsing
 
 # from m_search.notion_blocks import get_all_children_blocks, get_block_type
 from m_search.notion_blocks import (
@@ -69,7 +70,8 @@ def main():
     # block_content = fetch_block_details(notion, args.page_id)
     # pretty_print(block_content)
     children_blocks = get_all_children_blocks(notion, args.page_id)
-    pretty_print(children_blocks)
+    dispatch_blocks_parsing(children_blocks)
+    # pretty_print(children_blocks)
     # page_details = fetch_page_details(notion, args.page_id)
     # pretty_print(page_details)
     # blocks = fetch_and_process_block_hierarchy(notion, args.page_id)
