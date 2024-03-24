@@ -1,8 +1,8 @@
-"""Defines the theme mapping for Notion to markdown"""
+"""Defines the theme mapping for Notion to markdown."""
+
 
 def notion_color_to_html(notion_color: str):
-    """
-    Convert a Notion color name to an HTML color code.
+    """Convert a Notion color name to an HTML color code.
 
     This function takes a color name as used in Notion, and returns the corresponding HTML color code.
     If the color name is not recognized, it defaults to black.
@@ -26,6 +26,8 @@ def notion_color_to_html(notion_color: str):
         "pink": "#ffc0cb",
         "red": "#ff0000",
     }
-    
+
     # Return the corresponding HTML color code or a default if not found
-    return color_mapping.get(notion_color.lower(), "#000000")  # Default to black if the color is not found
+    return color_mapping.get(
+        notion_color.lower(), "#000000"
+    )  # Default to black if the color is not found

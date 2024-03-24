@@ -1,9 +1,9 @@
-"""Auxiliary functions for fetching Notion pages."""
+"""Auxiliaryy functions for fetching Notion pages."""
+
 
 def fetch_page_details(notion_client, page_id):
-    """
-    Fetches the details of a page given its ID. Placeholder for actual implementation.
-    
+    """Fetches the details of a page given its ID. Placeholder for actual implementation.
+
     Parameters:
     - notion_client: The Notion client used to fetch pages.
     - page_id: The ID of the page to fetch.

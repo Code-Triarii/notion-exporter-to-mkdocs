@@ -5,26 +5,29 @@
  -->
 
 <!-- PROJECT LOGO -->
+
 # 📝 Notion Wiki exporter to MkDocs
 
 <!-- TECNOLOGIES -->
+
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-This project aims to provide an easy way for migrating Notion Wikis from your organization to MkDocs. 
+This project aims to provide an easy way for migrating Notion Wikis from your organization to MkDocs.
 We had a use case in which we were needing to migrate all the content that we have been generating in our Notion wiki to other system/platform.
 Since MkDocs is extending as powerful solution for managing wikis, we decided to give it a try thinking always with the **automation first mindset**.
 
 [View Demo](#) · [Report Bug](https://github.com/Code-Triarii/notion-exporter-to-mkdocs/issues) · [Request Feature](https://github.com/Code-Triarii/notion-exporter-to-mkdocs/issues)
+
 </div>
 
-> [!CAUTION]
+> \[!CAUTION\]
 > Change description Lorem ipsum for the project information
 
 <!-- TABLE OF CONTENTS -->
 
-
 ## 📚 Table of contents
+
 - [📝 Notion Wiki exporter to MkDocs](#-notion-wiki-exporter-to-mkdocs)
   - [📚 Table of contents](#-table-of-contents)
   - [🚧 Solution Architecture](#-solution-architecture)
@@ -47,14 +50,12 @@ Since MkDocs is extending as powerful solution for managing wikis, we decided to
 
 ## 🚧 Solution Architecture
 
-> [!IMPORTANT]
+> \[!IMPORTANT\]
 > Do not forget to change the Architecture picture/diagram and delete the label
 
 ![Architecture](./docs/img/architecture.png)
 
 ### Components
-
-
 
 [🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
@@ -94,7 +95,6 @@ Install `Docker Engine`. Visit [https://docs.docker.com/engine/install/](https:/
 docker build . -t notion-exporter:1.0
 ```
 
-
 2. Run docker image:
 
 ```bash
@@ -104,20 +104,25 @@ docker run -it --name notion-exporter --rm -v $(pwd):/app --user $(id -u):$(id -
 [🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- USAGE EXAMPLES -->
+
 ### 💼 Usage
 
----
-> [!TIP]
+______________________________________________________________________
+
+> \[!TIP\]
 > TOEDIT: Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-* CLI: In this case show the help and put some examples of the most interesting options
-* Web Application: if the project is a component of a broader project, link it ot the main Documentation for the project usage and especify only the specific configurations for the component. Example: if this is the front end, talk about the specific options that can be configured.
----
+
+- CLI: In this case show the help and put some examples of the most interesting options
+- Web Application: if the project is a component of a broader project, link it to the main Documentation for the project usage and especify only the specific configurations for the component. Example: if this is the front end, talk about the specific options that can be configured.
+
+______________________________________________________________________
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
 [🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- GETTING STARTED -->
+
 ## Local development
 
 For quick development set-up leveraging Docker, you can use the build image and run it eternally:
@@ -135,12 +140,13 @@ docker exec -it -u 0:0 notion-exporter sh
 This way you would be able to develop without having to concern about dependencies installation in your host system, testing and breaking as you like.
 
 <!-- ROADMAP -->
+
 ## 📍 Features and roadmap
 
 - Functionality:
 - [x] Export Notion wiki.
 - [ ] Parametrized execution for reusability.
-- Deployment:  
+- Deployment:
   - [ ] Bundle automation in Docker image definition.
   - [ ] Prepare automation to deploy in kubernetes cluster with Helm.
 
@@ -149,6 +155,7 @@ See the [open issues](https://github.com/Code-Triarii/notion-exporter-to-mkdocs/
 [🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- CONTRIBUTING -->
+
 ## 📎 Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated** :chart:.
@@ -173,6 +180,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 [🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- LICENSE -->
+
 ## 📃 License
 
 Distributed under the `Apache2.0` License. See [LICENSE](./LICENSE) for more information.
@@ -180,6 +188,7 @@ Distributed under the `Apache2.0` License. See [LICENSE](./LICENSE) for more inf
 [🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 <!-- CONTACT -->
+
 ## 👥 Contact
 
 <div align="center">
@@ -208,6 +217,7 @@ Don't forget to give the project a star if you liked it! Thanks again! :star2: :
 - [Working with Notion Page content - API](https://developers.notion.com/docs/working-with-page-content)
 
 <!-- ACKNOWLEDGMENTS -->
+
 ## 🔍 Acknowledgments
 
 :100: :100: :100: For those that are curious about some of the resources or utilities and for sure thanking and giving credit to authors, we provide you a list of the most interesting ones (in our understanding) :100: :100: :100:

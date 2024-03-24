@@ -1,9 +1,9 @@
 import os
 import shutil
 
+
 def is_folder(path):
-    """
-    Check if the given path points to a folder.
+    """Check if the given path points to a folder.
 
     Parameters:
     - path (str): The path to check.
@@ -14,9 +14,9 @@ def is_folder(path):
     # Check if the path exists and is a directory
     return os.path.exists(path) and os.path.isdir(path)
 
+
 def prepare_output_folder(folder_path):
-    """
-    Prepare the output folder by ensuring the specified folder exists and is empty.
+    """Prepare the output folder by ensuring the specified folder exists and is empty.
 
     Parameters:
     - folder_path (str): The path to the folder to prepare.
@@ -32,7 +32,7 @@ def prepare_output_folder(folder_path):
             os.makedirs(folder_path)
             print(f"Folder '{folder_path}' created.")
             return
-    
+
     # If the folder exists, empty it
     try:
         shutil.rmtree(folder_path)

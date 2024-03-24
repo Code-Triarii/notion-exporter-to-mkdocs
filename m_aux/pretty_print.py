@@ -1,23 +1,24 @@
-"""Auxiliar module to pretty print data structures."""
+"""Auxiliary module to pretty print data structures."""
 
 import json
 
-def pretty_print(obj, label:str=None):
-    """
-    Pretty prints the input object. Supports dictionaries, valid JSON strings, lists of dictionaries, and other objects by converting them to strings.
-    
+
+def pretty_print(obj, label: str = None):
+    """Pretty prints the input object. Supports dictionaries, valid JSON strings, lists of
+    dictionaries, and other objects by converting them to strings.
+
     Parameters:
     - obj: The object to print. Can be a dict, a JSON string, a list of dicts, or any object.
     - label (optional): A label to print before the object. The label will be printed in yellow.
     """
     # Define ANSI color codes for yellow text and reset
-    YELLOW = '\033[93m'
-    RESET = '\033[0m'
-    
+    YELLOW = "\033[93m"
+    RESET = "\033[0m"
+
     # Print the label in yellow if provided
     if label:
         print(f"{YELLOW}{label}{RESET}\n")
-    
+
     # Check the type of obj and handle accordingly
     if isinstance(obj, dict):
         # Object is a dictionary, convert to JSON string for pretty printing
