@@ -3,3 +3,4 @@ __pycache__/
 .bashrc
 .bash_history
 wiki_processed_files/
+samples/

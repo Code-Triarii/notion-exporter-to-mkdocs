@@ -1,7 +1,9 @@
 """Auxiliary functions for fetching Notion pages."""
 
+from m_config.notion_client import notion_client
 
-def fetch_page_details(notion_client, page_id):
+
+def fetch_page_details(page_id):
     """Fetches the details of a page given its ID. Placeholder for actual implementation.
 
     Parameters:
