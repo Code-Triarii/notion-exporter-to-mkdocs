@@ -1,17 +1,31 @@
 from m_aux.pretty_print import pretty_print
-from m_parse.block_models import ChildPageBlock, ParagraphBlock, validate_block
-from m_parse.markdown_processing_helpers import markdown_headings, markdown_table
+from m_parse.block_models import ChildPageBlock, ParagraphBlock, CodeBlock, validate_block
+from m_parse.markdown_processing_helpers import markdown_headings, markdown_table, markdown_code_block
 from m_search.notion_pages import fetch_page_details
 
 
 @validate_block(ParagraphBlock)
 def parse_paragraph(block: ParagraphBlock):
-    pretty_print(block)
     return [{"fake": "data"}, {"fake_child": "data"}, {"fake_child": "data"}]
 
+@validate_block(CodeBlock)
+def parse_code(block: CodeBlock):
+    pretty_print(block.code.rich_text[0].text["content"])
+    return {
+        "id": block.id,
+        "md": markdown_code_block(code=block.code.rich_text[0].text["content"], caption=block.code.caption[0].text["content"], language=block.code.language)
+    }
 
 def get_page_changelog(page_details: dict) -> str:
-    # Extracting necessary information
+    """
+    Extracts changelog information from page details and formats it into a markdown table.
+
+    Parameters:
+    - page_details (dict): The details of the page.
+
+    Returns:
+    - str: A markdown table containing the changelog information.
+    """
     owner = (
         page_details.get("properties", {})
         .get("Owner", {})
@@ -31,7 +45,7 @@ def get_page_changelog(page_details: dict) -> str:
     )  # Assuming you want the ID; adjust as necessary
 
     # Organizing data for the markdown_table function
-    headers = ["Key", "Value"]
+    headers = [" ", " "]
     rows = [
         ["Owner", owner],
         ["Created time", created_time],
@@ -45,10 +59,20 @@ def get_page_changelog(page_details: dict) -> str:
 
 @validate_block(ChildPageBlock)
 def parse_child_page(block: ChildPageBlock):
+    """
+    Parses a ChildPageBlock, fetches the page details, and generates a list of processed blocks.
+
+    This function is decorated with the validate_block decorator, which checks if the block is of the correct type.
+
+    Parameters:
+    - block (ChildPageBlock): The block to parse.
+
+    Returns:
+    - list: A list of dictionaries, where each dictionary represents a processed block and contains its ID and markdown content.
+    """
     page_processed_blocks = []
     page_details = fetch_page_details(block.id)
     changelog = get_page_changelog(page_details)
     page_processed_blocks.append({"id": block.id, "md": markdown_headings(block.child_page.title)})
     page_processed_blocks.append({"id": block.id, "md": changelog})
-    pretty_print(page_processed_blocks)
     return page_processed_blocks

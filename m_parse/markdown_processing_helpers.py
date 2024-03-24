@@ -43,3 +43,34 @@ def markdown_table(headers: List[str], rows: List[List[str]]) -> str:
 
     # Combine all parts and return
     return "\n".join([header_row, separator_row] + data_rows)
+
+def markdown_code_block(code: str, caption: str = None, language: str = "") -> str:
+    """
+    Generates a markdown code block with optional language specification.
+
+    Parameters:
+    - code (str): The code content to include in the code block.
+    - language (str): The language identifier for syntax highlighting. Defaults to an empty string.
+
+    Returns:
+    - str: The formatted markdown code block string.
+    """
+    language_mapping = {
+        "JSON": "json",
+        "CSS": "css",
+        "Go": "go",
+        "Python": "python",
+        "YAML": "yaml",
+        "PowerShell": "powershell",
+        "JavaScript": "javascript",
+        "HTML": "html",
+        "Docker": "dockerfile",
+        "bash": "bash",
+    }
+
+    # Get the Markdown code identifier or default to no specific language
+    markdown_language = language_mapping.get(language, "")
+
+    # Format the code block for Markdown
+    markdown_code_block = f'```{markdown_language}\n{f"#{caption}" if caption else ""}{code}\n```'
+    return markdown_code_block

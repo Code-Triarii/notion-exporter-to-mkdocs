@@ -1,8 +1,6 @@
 from functools import wraps
 from typing import List, Optional
-
 from pydantic import BaseModel
-
 from m_aux.pretty_print import pretty_print
 
 
@@ -22,6 +20,11 @@ class ParagraphBlock(BaseModel):
 class ChildPageBlock(BaseModel):
     title: str
 
+class CodeBlock(BaseModel):
+    caption: List[RichText]
+    rich_text: List[RichText]
+    language: str
+
 
 class Block(BaseModel):
     object: str
@@ -29,6 +32,7 @@ class Block(BaseModel):
     type: str
     paragraph: Optional[ParagraphBlock] = None
     child_page: Optional[ChildPageBlock] = None
+    code: Optional[CodeBlock] = None
     # Add other fields and types as necessary
 
 
