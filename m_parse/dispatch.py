@@ -1,4 +1,3 @@
-from m_config.notion_client import notion_client
 from m_parse.block_models import Block
 from m_parse.markdown_processing import *
 
@@ -43,7 +42,7 @@ def dispatch_block_parsing(block_data: dict):
         parse_func = globals().get(parse_func_name)
 
         if parse_func and getattr(validated_block, validated_block.type):
-            return parse_func(getattr(validated_block, validated_block.type))
+            return parse_func(validated_block)
         else:
             print(f"Unsupported block type or missing data for type: {validated_block.type}")
     except Exception as e:
