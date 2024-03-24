@@ -74,18 +74,28 @@ def add_parent_hierarchy(block, parent_hierarchy=[]):
         block[key] = parent_info
 
 
-def get_all_children_blocks(notion_client:Client,page_id: str):
+def get_all_children_blocks(notion_client: Client, page_id: str):
     """
-    Get the children blocks of a given block (page_id).
-    
+    Get all child blocks of a given block (page_id) considering pagination.
+
     Parameters:
-    block (dict): The block from which to extract children.
+    - notion_client (Client): The Notion client to use for API requests.
+    - page_id (str): The ID of the block from which to extract children.
     
     Returns:
-    list: A list of children blocks.
+    - list: A list of all child blocks.
     """
-    blocks = notion_client.blocks.children.list(block_id=page_id)
-    return blocks.get("results",[])
+    all_blocks = []
+    start_cursor = None
+    has_more = True
+
+    while has_more:
+        response = notion_client.blocks.children.list(block_id=page_id, start_cursor=start_cursor)
+        all_blocks.extend(response.get("results", []))
+        start_cursor = response.get("next_cursor")
+        has_more = response.get("has_more", False)
+
+    return all_blocks
 
 def fetch_block_details(notion_client, block_id):
     """
