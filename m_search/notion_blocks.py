@@ -13,6 +13,7 @@ def get_all_children_blocks(notion_client:Client,page_id: str):
     list: A list of children blocks.
     """
     blocks = notion_client.blocks.children.list(block_id=page_id)
+    pretty_print(blocks)
     return blocks.get("results",[])
 
 def get_block_type(block:dict):
@@ -25,5 +26,6 @@ def get_block_type(block:dict):
     Returns:
     str: The type of the block.
     """
+    pretty_print(f'Block: {block.get("id")}, Type: {block.get("type")}')
     return block.get("type")
     
