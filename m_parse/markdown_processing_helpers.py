@@ -56,7 +56,7 @@ def markdown_code_block(code: str, caption: str = None, language: str = "") -> s
     - str: The formatted markdown code block string.
     """
     language_mapping = {
-        "JSON": "json",
+        "json": "json",
         "CSS": "css",
         "Go": "go",
         "Python": "python",
@@ -64,13 +64,14 @@ def markdown_code_block(code: str, caption: str = None, language: str = "") -> s
         "PowerShell": "powershell",
         "JavaScript": "javascript",
         "HTML": "html",
-        "Docker": "dockerfile",
+        "docker": "dockerfile",
         "bash": "bash",
     }
 
     # Get the Markdown code identifier or default to no specific language
     markdown_language = language_mapping.get(language, "")
+    caption = f'#{caption}' if caption else ''
 
     # Format the code block for Markdown
-    markdown_code_block = f'```{markdown_language}\n{f"#{caption}" if caption else ""}{code}\n```'
+    markdown_code_block = f"```{markdown_language}\n{caption}\n{code}\n```"
     return markdown_code_block
