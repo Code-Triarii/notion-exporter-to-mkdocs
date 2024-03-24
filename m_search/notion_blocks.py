@@ -29,7 +29,7 @@ def fetch_and_process_block_hierarchy(notion_client, root_block_id):
             return
         
         # Add parent hierarchy information to the current block
-        add_parent_hierarchy(notion_client, current_block, parent_hierarchy.copy())
+        add_parent_hierarchy(current_block, parent_hierarchy.copy())
         
         # Add the processed block to the list
         processed_blocks.append(current_block)
@@ -47,34 +47,32 @@ def fetch_and_process_block_hierarchy(notion_client, root_block_id):
     process_block(root_block_id)
     return processed_blocks
 
-def add_parent_hierarchy(notion_client, block, parent_hierarchy=[]):
+def add_parent_hierarchy(block, parent_hierarchy=[]):
     """
-    Recursively adds parent hierarchy identifiers to a block.
+    Adds parent hierarchy identifiers to a block, ensuring no duplications and starting labeling from c_parent_1.
+
     Parameters:
-    - notion_client: Instance of Notion client to fetch blocks.
     - block: The current block being processed (dict).
     - parent_hierarchy: A list of dictionaries each containing parent block_id and type collected up to the current depth.
     """
-    # Use .get() to safely access dictionary keys
     parent_block = block.get("parent", {})
-    parent_id = parent_block.get("block_id")
+    parent_id = (parent_block.get("block_id") or parent_block.get("page_id")).strip()
     parent_type = block.get("type")
 
-    if parent_id:
-        # Append a new dictionary with parent_id and parent_type to the hierarchy list
-        parent_hierarchy.append({"block_id": parent_id, "type": parent_type})
-        
-        # Add c_parent hierarchy information to the block
-        for i, parent_info in enumerate(parent_hierarchy):
-            key = f"c_parent_{i}" if i > 0 else "c_parent"
-            block[key] = parent_info
+    # Normalize block_id before comparison
+    normalized_parent_id = parent_id.replace("-", "")
 
-    # If the block has children, iterate over them and apply the function recursively
-    if block.get("has_children", False):
-        child_blocks = get_all_children_blocks(notion_client, block["id"])
-        for child in child_blocks:
-            # Recursive call with the updated list of parent hierarchy
-            add_parent_hierarchy(notion_client, child, parent_hierarchy.copy())
+    # Check the entire hierarchy for duplication
+    is_duplicate = any((parent.get("block_id").replace("-", "") == normalized_parent_id) for parent in parent_hierarchy)
+
+    if not is_duplicate and parent_id:
+        parent_hierarchy.append({"block_id": parent_id, "type": parent_type})
+
+    # Assign the parent hierarchy to the block with adjusted keys starting from c_parent_1
+    for i, parent_info in enumerate(parent_hierarchy, start=1):
+        key = f"c_parent_{i}"
+        block[key] = parent_info
+
 
 def get_all_children_blocks(notion_client:Client,page_id: str):
     """

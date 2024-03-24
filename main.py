@@ -39,6 +39,8 @@ def main():
     prepare_output_folder(args.outputs_dir)
 
     # Handle commands
+    block_content = fetch_block_details(notion, args.page_id)
+    pretty_print(block_content)
     blocks = fetch_and_process_block_hierarchy(notion, args.page_id)
     pretty_print(blocks)
     
