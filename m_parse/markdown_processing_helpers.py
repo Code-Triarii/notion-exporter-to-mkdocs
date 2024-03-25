@@ -44,34 +44,48 @@ def markdown_table(headers: List[str], rows: List[List[str]]) -> str:
     # Combine all parts and return
     return "\n".join([header_row, separator_row] + data_rows)
 
+
 def markdown_code_block(code: str, caption: str = None, language: str = "") -> str:
     """
-    Generates a markdown code block with optional language specification.
-
+    Generates a markdown code block with optional language specification and caption.
+    
     Parameters:
     - code (str): The code content to include in the code block.
+    - caption (str): An optional caption for the code block. Inserted as a comment within the code.
     - language (str): The language identifier for syntax highlighting. Defaults to an empty string.
-
+    
     Returns:
     - str: The formatted markdown code block string.
     """
     language_mapping = {
-        "json": "json",
-        "CSS": "css",
-        "Go": "go",
-        "Python": "python",
-        "YAML": "yaml",
-        "PowerShell": "powershell",
-        "JavaScript": "javascript",
-        "HTML": "html",
-        "docker": "dockerfile",
-        "bash": "bash",
+        "json": {"language": "json", "comment": "//"},
+        "CSS": {"language": "css", "comment": "/*"},
+        "Go": {"language": "go", "comment": "//"},
+        "Python": {"language": "python", "comment": "#"},
+        "YAML": {"language": "yaml", "comment": "#"},
+        "PowerShell": {"language": "powershell", "comment": "#"},
+        "JavaScript": {"language": "javascript", "comment": "//"},
+        "html": {"language": "html", "comment": "<!--"},
+        "docker": {"language": "dockerfile", "comment": "#"},
+        "bash": {"language": "bash", "comment": "#"},
     }
-
-    # Get the Markdown code identifier or default to no specific language
-    markdown_language = language_mapping.get(language, "")
-    caption = f'#{caption}' if caption else ''
-
+    # Get the language details or default to no specific language and comment
+    language_details = language_mapping.get(language, {"language": "", "comment": ""})
+    markdown_language = language_details["language"]
+    comment_syntax = language_details["comment"]
+    
+    # Prepare caption with appropriate comment syntax if provided
+    if caption:
+        # Special handling for CSS and HTML to close the comment block
+        if language == "css":
+            formatted_caption = f"{comment_syntax} {caption} */"
+        elif language == "html":
+            formatted_caption = f"{comment_syntax} {caption} -->"
+        else:
+            formatted_caption = f"{comment_syntax} {caption}"
+        # Insert the formatted caption at the beginning of the code block
+        code = f"{formatted_caption}\n{code}"
+    
     # Format the code block for Markdown
-    markdown_code_block = f"```{markdown_language}\n{caption}\n{code}\n```"
+    markdown_code_block = f"```{markdown_language}\n{code}\n```"
     return markdown_code_block
