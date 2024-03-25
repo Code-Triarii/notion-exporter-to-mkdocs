@@ -65,14 +65,16 @@ def main():
     # Handle commands
     # block_content = fetch_block_details(notion, args.page_id)
     # pretty_print(block_content)
-    children_blocks = get_all_children_blocks(args.page_id)
-    pretty_print(children_blocks)
-    processed_blocks = dispatch_blocks_parsing(children_blocks)
+    # children_blocks = get_all_children_blocks(args.page_id)
+    # pretty_print(children_blocks)
+    blocks = fetch_and_process_block_hierarchy(args.page_id)
+    pretty_print(blocks)
+    processed_blocks = dispatch_blocks_parsing(blocks)
     pretty_print(processed_blocks)
     # pretty_print(children_blocks)
     # page_details = fetch_page_details(notion, args.page_id)
     # pretty_print(page_details)
-    # blocks = fetch_and_process_block_hierarchy(notion, args.page_id)
+    # blocks = fetch_and_process_block_hierarchy(args.page_id)
     # pretty_print(blocks)
 
 

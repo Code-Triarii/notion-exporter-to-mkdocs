@@ -1,5 +1,6 @@
-from m_parse.block_models import Block
+from m_parse.block_models import Block, add_dynamic_parents
 from m_parse.markdown_processing import *
+from m_aux.pretty_print import pretty_print
 
 
 def dispatch_block_parsing(block_data: dict):
@@ -37,7 +38,7 @@ def dispatch_block_parsing(block_data: dict):
       naming convention.
     """
     try:
-        validated_block = Block.parse_obj(block_data)
+        validated_block = Block.parse_obj(add_dynamic_parents(block_data))
         parse_func_name = f"parse_{validated_block.type}"
         parse_func = globals().get(parse_func_name)
 

@@ -1,9 +1,6 @@
 from functools import wraps
-from typing import List, Optional
-
-from pydantic import BaseModel
-
-from m_aux.pretty_print import pretty_print
+from typing import List, Optional, Dict
+from pydantic import BaseModel, Field
 
 
 class RichText(BaseModel):
@@ -46,6 +43,13 @@ class Heading3Block(BaseModel):
     color: str
     is_toggleable: Optional[bool] = None
 
+class LinkToPageBlock(BaseModel):
+    type: str
+    page_id: str
+
+class ParentReference(BaseModel):
+    block_id: str
+    type: str
 
 class Block(BaseModel):
     object: str
@@ -57,7 +61,11 @@ class Block(BaseModel):
     heading_1: Optional[Heading1Block] = None
     heading_2: Optional[Heading2Block] = None
     heading_3: Optional[Heading3Block] = None
+    link_to_page: Optional[LinkToPageBlock] = None
     # Add other fields and types as necessary
+    dynamic_parents: Dict[str, ParentReference] = Field(default_factory=dict)
+    class Config:
+        extra = "allow"
 
 
 def validate_block(block_model: BaseModel):
@@ -84,3 +92,43 @@ def validate_block(block_model: BaseModel):
         return wrapper
 
     return decorator
+
+def add_dynamic_parents(block_data: dict) -> dict:
+    """
+    Processes a dictionary representing block data to extract and group all `c_parent_{i}` entries into a 
+    separate dictionary within the block data under the key `dynamic_parents`.
+
+    This function iterates over each item in the provided dictionary, searching for keys that start with 
+    `c_parent_`. Each matching item is added to a new dictionary, `dynamic_parents`, which is then added 
+    back into the original block data under its own key. This is useful for handling blocks with an 
+    arbitrary number of parent references dynamically in the data structure.
+
+    Parameters:
+    - block_data (dict): The original dictionary of block data, potentially containing various `c_parent_{i}` keys.
+
+    Returns:
+    - dict: The modified dictionary with `c_parent_{i}` data grouped under a `dynamic_parents` key.
+
+    Example:
+    ```
+    original_data = {
+        "id": "some_id",
+        "type": "some_type",
+        "c_parent_1": {"block_id": "parent1_id", "type": "parent1_type"},
+        "c_parent_2": {"block_id": "parent2_id", "type": "parent2_type"}
+    }
+    modified_data = add_dynamic_parents(original_data)
+    print(modified_data["dynamic_parents"])
+    # Output: {
+    #   "c_parent_1": {"block_id": "parent1_id", "type": "parent1_type"},
+    #   "c_parent_2": {"block_id": "parent2_id", "type": "parent2_type"}
+    # }
+    ```
+    """
+    dynamic_parents = {}
+    for key, value in block_data.items():
+        if key.startswith("c_parent_"):
+            dynamic_parents[key] = value
+    block_data["dynamic_parents"] = dynamic_parents
+    return block_data
+

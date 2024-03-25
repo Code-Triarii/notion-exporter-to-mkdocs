@@ -6,12 +6,14 @@ from m_parse.block_models import (
     Heading2Block,
     Heading3Block,
     ParagraphBlock,
+    LinkToPageBlock,
     validate_block,
 )
 from m_parse.markdown_processing_helpers import (
     markdown_code_block,
     markdown_headings,
     markdown_table,
+    markdown_link
 )
 from m_search.notion_pages import fetch_page_details
 
@@ -114,3 +116,9 @@ def parse_child_page(block: ChildPageBlock):
     page_processed_blocks.append({"id": block.id, "md": markdown_headings(block.child_page.title)})
     page_processed_blocks.append({"id": block.id, "md": changelog})
     return page_processed_blocks
+
+@validate_block(LinkToPageBlock)
+def parse_link_to_page(block: LinkToPageBlock):
+    # TODO: Implement this function
+    pretty_print(block)
+    return f"[Linked Page](https://www.notion.so/hell)"

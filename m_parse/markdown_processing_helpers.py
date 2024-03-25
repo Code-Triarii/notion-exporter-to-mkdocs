@@ -47,6 +47,17 @@ def markdown_table(headers: List[str], rows: List[List[str]]) -> str:
     # Combine all parts and return
     return "\n".join([header_row, separator_row] + data_rows)
 
+def markdown_link(title: str, url: str) -> str:
+    """Generates a markdown link with the specified title and URL.
+
+    Parameters:
+    - title (str): The text to display for the link.
+    - url (str): The URL that the link points to.
+
+    Returns:
+    - str: The formatted markdown link string.
+    """
+    return f"[{title}]({url})"
 
 def markdown_code_block(code: str, caption: str = None, language: str = "") -> str:
     """Generates a markdown code block with optional language specification and caption.
