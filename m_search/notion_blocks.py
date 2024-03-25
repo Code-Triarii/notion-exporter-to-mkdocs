@@ -58,11 +58,12 @@ def add_parent_hierarchy(block, parent_hierarchy=[]):
     - parent_hierarchy: A list of dictionaries each containing parent block_id and type collected up to the current depth.
     """
     parent_block = block.get("parent", {})
-    parent_id = (parent_block.get("block_id") or parent_block.get("page_id")).strip()
+    parent_id = parent_block.get("block_id") or parent_block.get("page_id")
+    parent_id = parent_id.strip() if parent_id else None
     parent_type = block.get("type")
 
     # Normalize block_id before comparison
-    normalized_parent_id = parent_id.replace("-", "")
+    normalized_parent_id = parent_id.replace("-", "") if parent_id else None
 
     # Check the entire hierarchy for duplication
     is_duplicate = any(

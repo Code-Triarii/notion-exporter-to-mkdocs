@@ -167,3 +167,16 @@ def markdown_note_with_heading(content: str, heading: str) -> str:
     markdown_note = f"> {heading_markdown}\n> {formatted_content}"
 
     return markdown_note
+
+
+def markdown_image(image_url: str, caption: str = "") -> str:
+    """Generates a Markdown image link with an optional caption.
+
+    Parameters:
+    - image_url (str): The URL of the image.
+    - caption (str): An optional caption for the image. Defaults to an empty string.
+
+    Returns:
+    - str: The formatted Markdown image link string.
+    """
+    return f"![{caption}]({image_url})"

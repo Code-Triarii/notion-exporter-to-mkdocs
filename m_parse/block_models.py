@@ -60,6 +60,22 @@ class QuoteBlock(BaseModel):
     color: str
 
 
+class ImageFile(BaseModel):
+    url: str
+    expiry_time: Optional[str] = None
+
+
+class ImageBlock(BaseModel):
+    caption: List[RichText] = []
+    type: str
+    file: ImageFile
+
+
+class BookmarkBlock(BaseModel):
+    caption: List[RichText] = []
+    url: str
+
+
 class Block(BaseModel):
     object: str
     id: str
@@ -72,6 +88,8 @@ class Block(BaseModel):
     heading_3: Optional[Heading3Block] = None
     link_to_page: Optional[LinkToPageBlock] = None
     quote: Optional[QuoteBlock] = None
+    image: Optional[ImageBlock] = None
+    bookmark: Optional[BookmarkBlock] = None
     # Add other fields and types as necessary
     dynamic_parents: Dict[str, ParentReference] = Field(default_factory=dict)
 

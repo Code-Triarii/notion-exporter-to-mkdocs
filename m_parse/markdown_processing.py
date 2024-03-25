@@ -1,11 +1,13 @@
 from m_aux.pretty_print import pretty_print
 from m_parse.block_models import (
     Block,
+    BookmarkBlock,
     ChildPageBlock,
     CodeBlock,
     Heading1Block,
     Heading2Block,
     Heading3Block,
+    ImageBlock,
     LinkToPageBlock,
     ParagraphBlock,
     QuoteBlock,
@@ -15,6 +17,7 @@ from m_parse.markdown_processing_helpers import (
     markdown_code_block,
     markdown_convert_paragraph_styles,
     markdown_headings,
+    markdown_image,
     markdown_link,
     markdown_note_with_heading,
     markdown_table,
@@ -95,7 +98,7 @@ def get_page_changelog(page_details: dict) -> str:
     return markdown_table(headers, rows)
 
 
-def parsing_block_return(block_id: str, md: str, item_type:str, path: str) -> dict:
+def parsing_block_return(block_id: str, md: str, item_type: str, path: str) -> dict:
     """Returns a dictionary with the block id and markdown content.
 
     Parameters:
@@ -131,7 +134,9 @@ def parse_paragraph(block: ParagraphBlock) -> str:
     # Join all parts into a single Markdown string
     markdown_paragraph = " ".join(markdown_parts)
 
-    return parsing_block_return(block.id, markdown_paragraph, block.type, calculate_path_on_hierarchy(block))
+    return parsing_block_return(
+        block.id, markdown_paragraph, block.type, calculate_path_on_hierarchy(block)
+    )
 
 
 @validate_block(Heading1Block)
@@ -140,7 +145,10 @@ def parse_heading_1(block: Heading1Block):
     heading_text = block.heading_1.rich_text[0].plain_text if block.heading_1.rich_text else ""
     # We move heading_1 to heading_2 level in the markdown because the page title will be the heading_1
     return parsing_block_return(
-        block.id, markdown_headings(heading_text, 2), block.type, calculate_path_on_hierarchy(block)
+        block.id,
+        markdown_headings(heading_text, 2),
+        block.type,
+        calculate_path_on_hierarchy(block),
     )
 
 
@@ -150,7 +158,10 @@ def parse_heading_2(block: Heading2Block):
     heading_text = block.heading_2.rich_text[0].plain_text if block.heading_2.rich_text else ""
     # Using the markdown_headings function to format as an H2 heading
     return parsing_block_return(
-        block.id, markdown_headings(heading_text, 3), block.type, calculate_path_on_hierarchy(block)
+        block.id,
+        markdown_headings(heading_text, 3),
+        block.type,
+        calculate_path_on_hierarchy(block),
     )
 
 
@@ -158,7 +169,10 @@ def parse_heading_2(block: Heading2Block):
 def parse_heading_3(block: Heading3Block):
     heading_text = block.heading_3.rich_text[0].plain_text if block.heading_3.rich_text else ""
     return parsing_block_return(
-        block.id, markdown_headings(heading_text, 4), block.type, calculate_path_on_hierarchy(block)
+        block.id,
+        markdown_headings(heading_text, 4),
+        block.type,
+        calculate_path_on_hierarchy(block),
     )
 
 
@@ -190,7 +204,9 @@ def parse_quote(block: Block) -> str:
     # Use the markdown_note_with_heading helper to format the entire quote
     markdown_note = markdown_note_with_heading(note_content.strip(), heading)
 
-    return parsing_block_return(block.id, markdown_note, block.type, calculate_path_on_hierarchy(block))
+    return parsing_block_return(
+        block.id, markdown_note, block.type, calculate_path_on_hierarchy(block)
+    )
 
 
 @validate_block(ChildPageBlock)
@@ -210,14 +226,50 @@ def parse_child_page(block: ChildPageBlock):
     changelog = get_page_changelog(page_details)
     path_hierarchy = calculate_path_on_hierarchy(block)
     page_processed_blocks.append(
-        parsing_block_return(block.id, markdown_headings(block.child_page.title), block.type, path_hierarchy)
+        parsing_block_return(
+            block.id, markdown_headings(block.child_page.title), block.type, path_hierarchy
+        )
     )
-    page_processed_blocks.append(parsing_block_return(block.id, changelog, block.type, path_hierarchy))
+    page_processed_blocks.append(
+        parsing_block_return(block.id, changelog, block.type, path_hierarchy)
+    )
     return page_processed_blocks
+
+
+@validate_block(ImageBlock)
+def parse_image(block: ImageBlock) -> str:
+    """Parses an image block into a Markdown image link."""
+    image_url = block.image.file.url
+    caption = (
+        " ".join([rt.plain_text for rt in block.image.caption]) if block.image.caption else ""
+    )
+
+    # Convert to Markdown image syntax
+    md = markdown_image(image_url, caption)
+
+    return parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
+
+
+@validate_block(BookmarkBlock)
+def parse_bookmark(block: BookmarkBlock) -> dict:
+    """Parses a bookmark block into a Markdown link."""
+    bookmark_url = block.bookmark.url
+    caption = (
+        " ".join([rt.plain_text for rt in block.bookmark.caption])
+        if block.bookmark.caption
+        else block.bookmark.url
+    )
+
+    # Generate the Markdown link
+    markdown_bookmark = markdown_link(caption, bookmark_url)
+
+    return parsing_block_return(
+        block.id, markdown_bookmark, block.type, calculate_path_on_hierarchy(block)
+    )
 
 
 @validate_block(LinkToPageBlock)
 def parse_link_to_page(block: LinkToPageBlock):
     # TODO: Implement this function
-    md = f"[Linked Page](https://www.notion.so/hell)"
+    md = "[Linked Page](https://www.notion.so/hell)"
     return parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
