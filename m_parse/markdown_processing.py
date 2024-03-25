@@ -8,6 +8,7 @@ from m_parse.block_models import (
     Heading3Block,
     LinkToPageBlock,
     ParagraphBlock,
+    QuoteBlock,
     validate_block,
 )
 from m_parse.markdown_processing_helpers import (
@@ -15,6 +16,7 @@ from m_parse.markdown_processing_helpers import (
     markdown_convert_paragraph_styles,
     markdown_headings,
     markdown_link,
+    markdown_note_with_heading,
     markdown_table,
 )
 from m_search.notion_pages import fetch_page_details
@@ -119,18 +121,15 @@ def parse_paragraph(block: ParagraphBlock) -> str:
     """Parses a paragraph block to Markdown, considering text styles."""
     # Initialize an empty list to hold Markdown-converted rich texts
     markdown_parts = []
-    # pretty_print(block)
 
     # Convert each rich text to Markdown and add it to the list
     for rich_text in block.paragraph.rich_text:
-        pretty_print(rich_text.text["content"], "rich_text.text[content]")
         markdown_parts.append(
             markdown_convert_paragraph_styles(rich_text.text["content"], rich_text.annotations)
         )
 
     # Join all parts into a single Markdown string
     markdown_paragraph = " ".join(markdown_parts)
-    pretty_print(markdown_paragraph, "markdown_paragraph")
 
     return parsing_block_return(block.id, markdown_paragraph, calculate_path_on_hierarchy(block))
 
@@ -171,6 +170,27 @@ def parse_code(block: CodeBlock):
         language=block.code.language,
     )
     return parsing_block_return(block.id, md, calculate_path_on_hierarchy(block))
+
+
+@validate_block(QuoteBlock)
+def parse_quote(block: Block) -> str:
+    """Parses a quote block into a Markdown formatted note with a specific heading."""
+    heading = "NOTE"
+
+    # Initialize an empty string to build the note content
+    note_content = ""
+
+    # Iterate through each rich text segment in the quote
+    for rich_text in block.quote.rich_text:
+        # Append plain text to the note_content string
+        note_content += markdown_convert_paragraph_styles(
+            rich_text.plain_text, rich_text.annotations
+        )
+
+    # Use the markdown_note_with_heading helper to format the entire quote
+    markdown_note = markdown_note_with_heading(note_content.strip(), heading)
+
+    return parsing_block_return(block.id, markdown_note, calculate_path_on_hierarchy(block))
 
 
 @validate_block(ChildPageBlock)

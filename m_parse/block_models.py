@@ -55,6 +55,11 @@ class ParentReference(BaseModel):
     type: str
 
 
+class QuoteBlock(BaseModel):
+    rich_text: List[RichText]
+    color: str
+
+
 class Block(BaseModel):
     object: str
     id: str
@@ -66,6 +71,7 @@ class Block(BaseModel):
     heading_2: Optional[Heading2Block] = None
     heading_3: Optional[Heading3Block] = None
     link_to_page: Optional[LinkToPageBlock] = None
+    quote: Optional[QuoteBlock] = None
     # Add other fields and types as necessary
     dynamic_parents: Dict[str, ParentReference] = Field(default_factory=dict)
 

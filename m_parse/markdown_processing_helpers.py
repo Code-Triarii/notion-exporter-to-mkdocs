@@ -140,3 +140,30 @@ def markdown_convert_paragraph_styles(content: str, annotations: dict) -> str:
     # Re-add leading and trailing spaces
     styled_content = f"{' ' * leading_spaces}{trimmed_content}{' ' * trailing_spaces}"
     return styled_content
+
+
+def markdown_note_with_heading(content: str, heading: str) -> str:
+    """Formats content as a Markdown note with a specific heading.
+
+    Parameters:
+    - content (str): The text content of the note.
+    - heading (str): The heading for the note, which must be one of "NOTE", "CAUTION", "IMPORTANT", or "TIP".
+
+    Returns:
+    - str: The formatted Markdown note string.
+
+    Raises:
+    - ValueError: If the heading is not one of the allowed values.
+    """
+    allowed_headings = ["NOTE", "CAUTION", "IMPORTANT", "TIP"]
+    if heading not in allowed_headings:
+        raise ValueError(f"Heading must be one of {allowed_headings}, got '{heading}'.")
+
+    # Escape brackets to avoid them being interpreted as links in some Markdown renderers
+    heading_markdown = f"\\[!{heading}\\]"
+    formatted_content = content.replace("\n", "\n> ")
+
+    # Format the content as a Markdown note
+    markdown_note = f"> {heading_markdown}\n> {formatted_content}"
+
+    return markdown_note
