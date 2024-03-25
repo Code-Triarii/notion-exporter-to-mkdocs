@@ -5,7 +5,6 @@ from m_aux.outputs import prepare_output_folder
 from m_aux.pretty_print import pretty_print
 from m_config.notion_client import set_log_level
 from m_parse.dispatch import dispatch_blocks_parsing
-from m_write.notion_processed_blocks import process_and_write
 
 # from m_search.notion_blocks import get_all_children_blocks, get_block_type
 from m_search.notion_blocks import (
@@ -14,6 +13,7 @@ from m_search.notion_blocks import (
     get_all_children_blocks,
 )
 from m_search.notion_pages import fetch_page_details
+from m_write.notion_processed_blocks import process_and_write
 
 
 def main():

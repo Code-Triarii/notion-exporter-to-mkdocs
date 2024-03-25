@@ -39,6 +39,9 @@ def fetch_and_process_block_hierarchy(root_block_id):
             current_block, parent_hierarchy.copy(), root_block_id, root_block_parent_id
         )
 
+        # Ensure to propagate the information about the input root block (passed as parameter from CLI)
+        current_block["root_block_id"] = root_block_id
+
         # Add the processed block to the list
         processed_blocks.append(current_block)
 
