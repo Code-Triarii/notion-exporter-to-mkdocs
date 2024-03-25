@@ -14,6 +14,13 @@ def fetch_and_process_block_hierarchy(root_block_id):
     - list: A list of all processed blocks, each with added parent hierarchy information.
     """
     processed_blocks = []
+    root_block = fetch_block_details(root_block_id)
+    root_block_parent = root_block.get("parent", None)
+    root_block_parent_id = (
+        (root_block_parent.get("block_id") or root_block_parent.get("page_id")).strip()
+        if root_block_parent
+        else None
+    )
 
     def process_block(block_id, parent_hierarchy=[]):
         """Recursively processes a block and its children, adding parent hierarchy information.
@@ -28,7 +35,9 @@ def fetch_and_process_block_hierarchy(root_block_id):
             return
 
         # Add parent hierarchy information to the current block
-        add_parent_hierarchy(current_block, parent_hierarchy.copy())
+        add_parent_hierarchy(
+            current_block, parent_hierarchy.copy(), root_block_id, root_block_parent_id
+        )
 
         # Add the processed block to the list
         processed_blocks.append(current_block)
@@ -49,7 +58,9 @@ def fetch_and_process_block_hierarchy(root_block_id):
     return processed_blocks
 
 
-def add_parent_hierarchy(block, parent_hierarchy=[]):
+def add_parent_hierarchy(
+    block, parent_hierarchy=[], root_block_id=None, root_block_parent_id=None
+):
     """Adds parent hierarchy identifiers to a block, ensuring no duplications and starting labeling
     from c_parent_1.
 
@@ -61,6 +72,9 @@ def add_parent_hierarchy(block, parent_hierarchy=[]):
     parent_id = parent_block.get("block_id") or parent_block.get("page_id")
     parent_id = parent_id.strip() if parent_id else None
     parent_type = block.get("type")
+
+    if root_block_id and block["id"] != root_block_id and root_block_parent_id:
+        parent_hierarchy.insert(0, {"block_id": root_block_parent_id, "type": "root"})
 
     # Normalize block_id before comparison
     normalized_parent_id = parent_id.replace("-", "") if parent_id else None

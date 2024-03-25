@@ -2,6 +2,7 @@ from m_aux.pretty_print import pretty_print
 from m_parse.block_models import (
     Block,
     BookmarkBlock,
+    BulletedListItemBlock,
     ChildPageBlock,
     CodeBlock,
     EmbedBlock,
@@ -15,6 +16,7 @@ from m_parse.block_models import (
     validate_block,
 )
 from m_parse.markdown_processing_helpers import (
+    markdown_bullet,
     markdown_code_block,
     markdown_convert_paragraph_styles,
     markdown_headings,
@@ -232,7 +234,7 @@ def parse_child_page(block: ChildPageBlock):
         )
     )
     page_processed_blocks.append(
-        parsing_block_return(block.id, changelog, block.type, path_hierarchy)
+        parsing_block_return(block.id, changelog, "changelog", path_hierarchy)
     )
     return page_processed_blocks
 
@@ -286,6 +288,21 @@ def parse_embed(block: Block) -> dict:
     return parsing_block_return(
         block.id, markdown_embed, block.type, calculate_path_on_hierarchy(block)
     )
+
+
+@validate_block(BulletedListItemBlock)
+def parse_bulleted_list_item(block: Block, indent_level: int = 0) -> dict:
+    """Parses a bulleted list item block into Markdown format, considering indentation and
+    styles."""
+    bullet_items = []
+    for rich_text_item in block.bulleted_list_item.rich_text:
+        content = rich_text_item.plain_text
+        annotations = rich_text_item.annotations
+        bullet_items.append(markdown_bullet(content, annotations, indent=indent_level))
+
+    md = "\n".join(bullet_items)
+
+    return parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
 
 
 @validate_block(LinkToPageBlock)

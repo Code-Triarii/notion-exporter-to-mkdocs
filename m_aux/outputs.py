@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 
 
@@ -40,3 +41,12 @@ def prepare_output_folder(folder_path):
         print(f"Folder '{folder_path}' was emptied and recreated.")
     except Exception as e:
         print(f"An error occurred while preparing the folder: {e}")
+
+
+def normalize_string(name):
+    """Normalizes names for files and directories."""
+    # Replace spaces with dashes, remove special characters, trim, and lowercase
+    name = re.sub(r"\s+", "-", name)  # Spaces to dashes
+    name = re.sub(r"[^\w\-]", "", name)  # Remove non-word characters except dashes
+    name = name.strip("-")  # Trim leading and trailing dashes
+    return name.lower()

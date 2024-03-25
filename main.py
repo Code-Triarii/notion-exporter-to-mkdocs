@@ -13,6 +13,7 @@ from m_search.notion_blocks import (
     get_all_children_blocks,
 )
 from m_search.notion_pages import fetch_page_details
+from m_write.notion_processed_blocks import process_blocks
 
 
 def main():
@@ -68,9 +69,10 @@ def main():
     # children_blocks = get_all_children_blocks(args.page_id)
     # pretty_print(children_blocks)
     blocks = fetch_and_process_block_hierarchy(args.page_id)
-    pretty_print(blocks)
+    pretty_print(blocks, "Fetched blocks")
     processed_blocks = dispatch_blocks_parsing(blocks)
-    pretty_print(processed_blocks)
+    # pretty_print(processed_blocks)
+    process_blocks(processed_blocks, args.outputs_dir)
     # pretty_print(children_blocks)
     # page_details = fetch_page_details(notion, args.page_id)
     # pretty_print(page_details)

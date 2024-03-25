@@ -81,6 +81,11 @@ class EmbedBlock(BaseModel):
     url: str
 
 
+class BulletedListItemBlock(BaseModel):
+    rich_text: List[RichText]
+    color: str
+
+
 class Block(BaseModel):
     object: str
     id: str
@@ -96,6 +101,7 @@ class Block(BaseModel):
     image: Optional[ImageBlock] = None
     bookmark: Optional[BookmarkBlock] = None
     embed: Optional[EmbedBlock] = None
+    bulleted_list_item: Optional[BulletedListItemBlock] = None
     # Add other fields and types as necessary
     dynamic_parents: Dict[str, ParentReference] = Field(default_factory=dict)
 
