@@ -98,7 +98,19 @@ docker build . -t notion-exporter:1.0
 2. Run docker image:
 
 ```bash
-docker run -it --name notion-exporter --rm -v $(pwd):/app --user $(id -u):$(id -g)
+docker run -it --name notion-exporter --rm -v $(pwd):/app --user $(id -u):$(id -g) -e NOTION_TOKEN="" notion-exporter:1.0 list all -p bc3caa74-66ba-4cd1-bfcd-02f18521903e
+```
+
+3. After the assets have been generated from Notion if everything went well, you can build the mkdocs image:
+
+```bash
+docker build .  -f Dockerfile.mkdocs -t mkdocs:1.0
+```
+
+4. Finally, you can set up you mkdocs wiki with the contents from your Notion.
+
+```bash
+docker run -d --name mkdocs -e MKDOCS_SITE="https://example.com" -e MKDOCS_PORT="8000" -e MKDOCS_INTERFACE="0.0.0.0" -e MKDOCS_SITE_NAME="mkdocs" -p 8000:8000 mkdocs:1.0
 ```
 
 [🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)

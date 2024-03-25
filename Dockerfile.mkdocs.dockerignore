@@ -1,0 +1,16 @@
+.git
+.github
+docs
+.gitignore
+.pre-commit-config.yaml
+LICENSE
+README.md
+m_aux
+m_config
+m_parse
+m_search
+m_write
+samples
+Dockerfile
+Dockerfile.dockerignore
+requirements.txt

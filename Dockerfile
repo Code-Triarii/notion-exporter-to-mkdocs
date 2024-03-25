@@ -5,6 +5,9 @@ RUN apk add --no-cache py3-pip && \
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+COPY . .
 
 RUN pip install -r requirements.txt
+
+ENTRYPOINT ["python", "main.py"]
+CMD [ "-h" ]

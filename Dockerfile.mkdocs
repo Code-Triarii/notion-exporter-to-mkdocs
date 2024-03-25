@@ -1,0 +1,22 @@
+FROM python:3.9.19-alpine3.19
+
+ENV MKDOCS_SITE=""
+ENV MKDOCS_PORT=8000
+ENV MKDOCS_INTERFACE="0.0.0.0"
+ENV MKDOCS_SITE_NAME="mkdocs"
+
+RUN apk add --no-cache py3-pip && \
+    pip install --upgrade pip
+
+RUN pip install mkdocs
+
+WORKDIR /app
+
+COPY wiki_processed_files/* /app/docs/
+
+COPY mkdocs/mkdocs.yml /app/mkdocs.yml
+COPY mkdocs/entrypoint.sh /app/entrypoint.sh
+
+RUN chmod +x /app/entrypoint.sh	
+
+ENTRYPOINT ["/app/entrypoint.sh"]
