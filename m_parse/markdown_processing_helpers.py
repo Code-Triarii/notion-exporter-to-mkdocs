@@ -1,9 +1,12 @@
-"""Helper functions for processing markdown content. Only those repeatedly used in the markdown processing functions are included here."""
+"""Helper functions for processing markdown content.
+
+Only those repeatedly used in the markdown processing functions are included here.
+"""
 from typing import List
 
+
 def markdown_headings(title: str, level: int = 1) -> str:
-    """
-    Generates a markdown heading with the specified level.
+    """Generates a markdown heading with the specified level.
 
     Parameters:
     - title (str): The title text of the heading.
@@ -23,9 +26,9 @@ def markdown_headings(title: str, level: int = 1) -> str:
 
     return heading
 
+
 def markdown_table(headers: List[str], rows: List[List[str]]) -> str:
-    """
-    Generates a markdown table from headers and row values.
+    """Generates a markdown table from headers and row values.
 
     Parameters:
     - headers (List[str]): A list of column headers.
@@ -46,14 +49,13 @@ def markdown_table(headers: List[str], rows: List[List[str]]) -> str:
 
 
 def markdown_code_block(code: str, caption: str = None, language: str = "") -> str:
-    """
-    Generates a markdown code block with optional language specification and caption.
-    
+    """Generates a markdown code block with optional language specification and caption.
+
     Parameters:
     - code (str): The code content to include in the code block.
     - caption (str): An optional caption for the code block. Inserted as a comment within the code.
     - language (str): The language identifier for syntax highlighting. Defaults to an empty string.
-    
+
     Returns:
     - str: The formatted markdown code block string.
     """
@@ -73,7 +75,7 @@ def markdown_code_block(code: str, caption: str = None, language: str = "") -> s
     language_details = language_mapping.get(language, {"language": "", "comment": ""})
     markdown_language = language_details["language"]
     comment_syntax = language_details["comment"]
-    
+
     # Prepare caption with appropriate comment syntax if provided
     if caption:
         # Special handling for CSS and HTML to close the comment block
@@ -85,7 +87,7 @@ def markdown_code_block(code: str, caption: str = None, language: str = "") -> s
             formatted_caption = f"{comment_syntax} {caption}"
         # Insert the formatted caption at the beginning of the code block
         code = f"{formatted_caption}\n{code}"
-    
+
     # Format the code block for Markdown
     markdown_code_block = f"```{markdown_language}\n{code}\n```"
     return markdown_code_block
