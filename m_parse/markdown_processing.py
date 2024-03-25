@@ -95,7 +95,7 @@ def get_page_changelog(page_details: dict) -> str:
     return markdown_table(headers, rows)
 
 
-def parsing_block_return(block_id: str, md: str, path: str) -> dict:
+def parsing_block_return(block_id: str, md: str, item_type:str, path: str) -> dict:
     """Returns a dictionary with the block id and markdown content.
 
     Parameters:
@@ -106,7 +106,7 @@ def parsing_block_return(block_id: str, md: str, path: str) -> dict:
     Returns:
     - dict: A dictionary containing the block ID and markdown content.
     """
-    return {"id": block_id, "md": md, "path": path}
+    return {"id": block_id, "md": md, "type": item_type, "path": path}
 
 
 ##################################################
@@ -131,7 +131,7 @@ def parse_paragraph(block: ParagraphBlock) -> str:
     # Join all parts into a single Markdown string
     markdown_paragraph = " ".join(markdown_parts)
 
-    return parsing_block_return(block.id, markdown_paragraph, calculate_path_on_hierarchy(block))
+    return parsing_block_return(block.id, markdown_paragraph, block.type, calculate_path_on_hierarchy(block))
 
 
 @validate_block(Heading1Block)
@@ -140,7 +140,7 @@ def parse_heading_1(block: Heading1Block):
     heading_text = block.heading_1.rich_text[0].plain_text if block.heading_1.rich_text else ""
     # We move heading_1 to heading_2 level in the markdown because the page title will be the heading_1
     return parsing_block_return(
-        block.id, markdown_headings(heading_text, 2), calculate_path_on_hierarchy(block)
+        block.id, markdown_headings(heading_text, 2), block.type, calculate_path_on_hierarchy(block)
     )
 
 
@@ -150,7 +150,7 @@ def parse_heading_2(block: Heading2Block):
     heading_text = block.heading_2.rich_text[0].plain_text if block.heading_2.rich_text else ""
     # Using the markdown_headings function to format as an H2 heading
     return parsing_block_return(
-        block.id, markdown_headings(heading_text, 3), calculate_path_on_hierarchy(block)
+        block.id, markdown_headings(heading_text, 3), block.type, calculate_path_on_hierarchy(block)
     )
 
 
@@ -158,7 +158,7 @@ def parse_heading_2(block: Heading2Block):
 def parse_heading_3(block: Heading3Block):
     heading_text = block.heading_3.rich_text[0].plain_text if block.heading_3.rich_text else ""
     return parsing_block_return(
-        block.id, markdown_headings(heading_text, 4), calculate_path_on_hierarchy(block)
+        block.id, markdown_headings(heading_text, 4), block.type, calculate_path_on_hierarchy(block)
     )
 
 
@@ -169,7 +169,7 @@ def parse_code(block: CodeBlock):
         caption=block.code.caption[0].text["content"],
         language=block.code.language,
     )
-    return parsing_block_return(block.id, md, calculate_path_on_hierarchy(block))
+    return parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
 
 
 @validate_block(QuoteBlock)
@@ -190,7 +190,7 @@ def parse_quote(block: Block) -> str:
     # Use the markdown_note_with_heading helper to format the entire quote
     markdown_note = markdown_note_with_heading(note_content.strip(), heading)
 
-    return parsing_block_return(block.id, markdown_note, calculate_path_on_hierarchy(block))
+    return parsing_block_return(block.id, markdown_note, block.type, calculate_path_on_hierarchy(block))
 
 
 @validate_block(ChildPageBlock)
@@ -210,9 +210,9 @@ def parse_child_page(block: ChildPageBlock):
     changelog = get_page_changelog(page_details)
     path_hierarchy = calculate_path_on_hierarchy(block)
     page_processed_blocks.append(
-        parsing_block_return(block.id, markdown_headings(block.child_page.title), path_hierarchy)
+        parsing_block_return(block.id, markdown_headings(block.child_page.title), block.type, path_hierarchy)
     )
-    page_processed_blocks.append(parsing_block_return(block.id, changelog, path_hierarchy))
+    page_processed_blocks.append(parsing_block_return(block.id, changelog, block.type, path_hierarchy))
     return page_processed_blocks
 
 
@@ -220,4 +220,4 @@ def parse_child_page(block: ChildPageBlock):
 def parse_link_to_page(block: LinkToPageBlock):
     # TODO: Implement this function
     md = f"[Linked Page](https://www.notion.so/hell)"
-    return parsing_block_return(block.id, md, calculate_path_on_hierarchy(block))
+    return parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
