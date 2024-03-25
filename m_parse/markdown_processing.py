@@ -4,6 +4,7 @@ from m_parse.block_models import (
     BookmarkBlock,
     ChildPageBlock,
     CodeBlock,
+    EmbedBlock,
     Heading1Block,
     Heading2Block,
     Heading3Block,
@@ -265,6 +266,25 @@ def parse_bookmark(block: BookmarkBlock) -> dict:
 
     return parsing_block_return(
         block.id, markdown_bookmark, block.type, calculate_path_on_hierarchy(block)
+    )
+
+
+@validate_block(EmbedBlock)
+def parse_embed(block: Block) -> dict:
+    """Parses an embed block into a Markdown link or an appropriate representation."""
+    embed_url = block.embed.url
+    # Using the URL as the title if the caption is empty, or concatenate the caption texts
+    caption_text = (
+        " ".join([rt.plain_text for rt in block.embed.caption])
+        if block.embed.caption
+        else embed_url
+    )
+
+    # Generate the Markdown link or another representation for the embed
+    markdown_embed = markdown_link(caption_text, embed_url)
+
+    return parsing_block_return(
+        block.id, markdown_embed, block.type, calculate_path_on_hierarchy(block)
     )
 
 

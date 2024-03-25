@@ -76,6 +76,11 @@ class BookmarkBlock(BaseModel):
     url: str
 
 
+class EmbedBlock(BaseModel):
+    caption: List[RichText] = []
+    url: str
+
+
 class Block(BaseModel):
     object: str
     id: str
@@ -90,6 +95,7 @@ class Block(BaseModel):
     quote: Optional[QuoteBlock] = None
     image: Optional[ImageBlock] = None
     bookmark: Optional[BookmarkBlock] = None
+    embed: Optional[EmbedBlock] = None
     # Add other fields and types as necessary
     dynamic_parents: Dict[str, ParentReference] = Field(default_factory=dict)
 
