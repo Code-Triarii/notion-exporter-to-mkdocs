@@ -1,5 +1,6 @@
 from functools import wraps
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -43,13 +44,16 @@ class Heading3Block(BaseModel):
     color: str
     is_toggleable: Optional[bool] = None
 
+
 class LinkToPageBlock(BaseModel):
     type: str
     page_id: str
 
+
 class ParentReference(BaseModel):
     block_id: str
     type: str
+
 
 class Block(BaseModel):
     object: str
@@ -64,6 +68,7 @@ class Block(BaseModel):
     link_to_page: Optional[LinkToPageBlock] = None
     # Add other fields and types as necessary
     dynamic_parents: Dict[str, ParentReference] = Field(default_factory=dict)
+
     class Config:
         extra = "allow"
 
@@ -93,14 +98,14 @@ def validate_block(block_model: BaseModel):
 
     return decorator
 
-def add_dynamic_parents(block_data: dict) -> dict:
-    """
-    Processes a dictionary representing block data to extract and group all `c_parent_{i}` entries into a 
-    separate dictionary within the block data under the key `dynamic_parents`.
 
-    This function iterates over each item in the provided dictionary, searching for keys that start with 
-    `c_parent_`. Each matching item is added to a new dictionary, `dynamic_parents`, which is then added 
-    back into the original block data under its own key. This is useful for handling blocks with an 
+def add_dynamic_parents(block_data: dict) -> dict:
+    """Processes a dictionary representing block data to extract and group all `c_parent_{i}`
+    entries into a separate dictionary within the block data under the key `dynamic_parents`.
+
+    This function iterates over each item in the provided dictionary, searching for keys that start with
+    `c_parent_`. Each matching item is added to a new dictionary, `dynamic_parents`, which is then added
+    back into the original block data under its own key. This is useful for handling blocks with an
     arbitrary number of parent references dynamically in the data structure.
 
     Parameters:
@@ -131,4 +136,3 @@ def add_dynamic_parents(block_data: dict) -> dict:
             dynamic_parents[key] = value
     block_data["dynamic_parents"] = dynamic_parents
     return block_data
-

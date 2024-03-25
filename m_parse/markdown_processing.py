@@ -1,61 +1,56 @@
 from m_aux.pretty_print import pretty_print
 from m_parse.block_models import (
+    Block,
     ChildPageBlock,
     CodeBlock,
     Heading1Block,
     Heading2Block,
     Heading3Block,
-    ParagraphBlock,
     LinkToPageBlock,
+    ParagraphBlock,
     validate_block,
 )
 from m_parse.markdown_processing_helpers import (
     markdown_code_block,
+    markdown_convert_paragraph_styles,
     markdown_headings,
+    markdown_link,
     markdown_table,
-    markdown_link
 )
 from m_search.notion_pages import fetch_page_details
 
-
-@validate_block(ParagraphBlock)
-def parse_paragraph(block: ParagraphBlock):
-    return [{"fake": "data"}, {"fake_child": "data"}, {"fake_child": "data"}]
-
-
-@validate_block(Heading1Block)
-def parse_heading_1(block: Heading1Block):
-    # Assuming rich_text always has at least one item and you want to use the first one for the heading
-    heading_text = block.heading_1.rich_text[0].plain_text if block.heading_1.rich_text else ""
-    # We move heading_1 to heading_2 level in the markdown because the page title will be the heading_1
-    return {"id": block.id, "md": markdown_headings(heading_text, 2)}
+##################################################
+#                                                #
+#                 AUX FUNCTIONS                  #
+#                                                #
+##################################################
 
 
-@validate_block(Heading2Block)
-def parse_heading_2(block: Heading2Block):
-    # Extracting the heading text from the first item of rich_text, if available
-    heading_text = block.heading_2.rich_text[0].plain_text if block.heading_2.rich_text else ""
-    # Using the markdown_headings function to format as an H2 heading
-    return {"id": block.id, "md": markdown_headings(heading_text, 3)}
+def calculate_path_on_hierarchy(block: Block) -> str:
+    """Calculates the path for a given block based on its hierarchy of parent pages.
 
+    This function iterates through the `dynamic_parents` dictionary of a block, filtering for parents
+    that are of type 'child_page'. The resulting path is constructed by concatenating these filtered
+    parents' identifiers in order, separated by slashes ('/').
 
-@validate_block(Heading3Block)
-def parse_heading_3(block: Heading3Block):
-    heading_text = block.heading_3.rich_text[0].plain_text if block.heading_3.rich_text else ""
-    return {"id": block.id, "md": markdown_headings(heading_text, 4)}
+    Parameters:
+    - block (Block): The block object for which to calculate the hierarchy path.
 
+    Returns:
+    - str: The calculated path, constructed from the block's parent pages.
+    """
+    # Ensure dynamic_parents exists and is a dictionary; otherwise, default to an empty dict
+    dynamic_parents = getattr(block, "dynamic_parents", {})
 
-@validate_block(CodeBlock)
-def parse_code(block: CodeBlock):
-    pretty_print(block.code.rich_text[0].text["content"])
-    return {
-        "id": block.id,
-        "md": markdown_code_block(
-            code=block.code.rich_text[0].text["content"],
-            caption=block.code.caption[0].text["content"],
-            language=block.code.language,
-        ),
-    }
+    # Filter for parents that are of type 'child_page' and collect their block_ids
+    page_parents = [
+        value.block_id for key, value in dynamic_parents.items() if value.type == "child_page"
+    ]
+
+    # Construct the path from filtered parent pages
+    path = "/".join(page_parents)
+
+    return path
 
 
 def get_page_changelog(page_details: dict) -> str:
@@ -98,6 +93,86 @@ def get_page_changelog(page_details: dict) -> str:
     return markdown_table(headers, rows)
 
 
+def parsing_block_return(block_id: str, md: str, path: str) -> dict:
+    """Returns a dictionary with the block id and markdown content.
+
+    Parameters:
+    - block_id (str): The ID of the block.
+    - md (str): The markdown content generated for the block.
+    - path (str): The calculated path for the block.
+
+    Returns:
+    - dict: A dictionary containing the block ID and markdown content.
+    """
+    return {"id": block_id, "md": md, "path": path}
+
+
+##################################################
+#                                                #
+#                 MAIN PARSING                   #
+#                                                #
+##################################################
+
+
+@validate_block(ParagraphBlock)
+def parse_paragraph(block: ParagraphBlock) -> str:
+    """Parses a paragraph block to Markdown, considering text styles."""
+    # Initialize an empty list to hold Markdown-converted rich texts
+    markdown_parts = []
+    # pretty_print(block)
+
+    # Convert each rich text to Markdown and add it to the list
+    for rich_text in block.paragraph.rich_text:
+        pretty_print(rich_text.text["content"], "rich_text.text[content]")
+        markdown_parts.append(
+            markdown_convert_paragraph_styles(rich_text.text["content"], rich_text.annotations)
+        )
+
+    # Join all parts into a single Markdown string
+    markdown_paragraph = " ".join(markdown_parts)
+    pretty_print(markdown_paragraph, "markdown_paragraph")
+
+    return parsing_block_return(block.id, markdown_paragraph, calculate_path_on_hierarchy(block))
+
+
+@validate_block(Heading1Block)
+def parse_heading_1(block: Heading1Block):
+    # Assuming rich_text always has at least one item and you want to use the first one for the heading
+    heading_text = block.heading_1.rich_text[0].plain_text if block.heading_1.rich_text else ""
+    # We move heading_1 to heading_2 level in the markdown because the page title will be the heading_1
+    return parsing_block_return(
+        block.id, markdown_headings(heading_text, 2), calculate_path_on_hierarchy(block)
+    )
+
+
+@validate_block(Heading2Block)
+def parse_heading_2(block: Heading2Block):
+    # Extracting the heading text from the first item of rich_text, if available
+    heading_text = block.heading_2.rich_text[0].plain_text if block.heading_2.rich_text else ""
+    # Using the markdown_headings function to format as an H2 heading
+    return parsing_block_return(
+        block.id, markdown_headings(heading_text, 3), calculate_path_on_hierarchy(block)
+    )
+
+
+@validate_block(Heading3Block)
+def parse_heading_3(block: Heading3Block):
+    heading_text = block.heading_3.rich_text[0].plain_text if block.heading_3.rich_text else ""
+    return parsing_block_return(
+        block.id, markdown_headings(heading_text, 4), calculate_path_on_hierarchy(block)
+    )
+
+
+@validate_block(CodeBlock)
+def parse_code(block: CodeBlock):
+    md = markdown_code_block(
+        code=block.code.rich_text[0].text["content"],
+        caption=block.code.caption[0].text["content"],
+        language=block.code.language,
+    )
+    return parsing_block_return(block.id, md, calculate_path_on_hierarchy(block))
+
+
 @validate_block(ChildPageBlock)
 def parse_child_page(block: ChildPageBlock):
     """Parses a ChildPageBlock, fetches the page details, and generates a list of processed blocks.
@@ -113,12 +188,16 @@ def parse_child_page(block: ChildPageBlock):
     page_processed_blocks = []
     page_details = fetch_page_details(block.id)
     changelog = get_page_changelog(page_details)
-    page_processed_blocks.append({"id": block.id, "md": markdown_headings(block.child_page.title)})
-    page_processed_blocks.append({"id": block.id, "md": changelog})
+    path_hierarchy = calculate_path_on_hierarchy(block)
+    page_processed_blocks.append(
+        parsing_block_return(block.id, markdown_headings(block.child_page.title), path_hierarchy)
+    )
+    page_processed_blocks.append(parsing_block_return(block.id, changelog, path_hierarchy))
     return page_processed_blocks
+
 
 @validate_block(LinkToPageBlock)
 def parse_link_to_page(block: LinkToPageBlock):
     # TODO: Implement this function
-    pretty_print(block)
-    return f"[Linked Page](https://www.notion.so/hell)"
+    md = f"[Linked Page](https://www.notion.so/hell)"
+    return parsing_block_return(block.id, md, calculate_path_on_hierarchy(block))

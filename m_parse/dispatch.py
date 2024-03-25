@@ -1,6 +1,6 @@
+from m_aux.pretty_print import pretty_print
 from m_parse.block_models import Block, add_dynamic_parents
 from m_parse.markdown_processing import *
-from m_aux.pretty_print import pretty_print
 
 
 def dispatch_block_parsing(block_data: dict):

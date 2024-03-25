@@ -47,6 +47,7 @@ def markdown_table(headers: List[str], rows: List[List[str]]) -> str:
     # Combine all parts and return
     return "\n".join([header_row, separator_row] + data_rows)
 
+
 def markdown_link(title: str, url: str) -> str:
     """Generates a markdown link with the specified title and URL.
 
@@ -58,6 +59,7 @@ def markdown_link(title: str, url: str) -> str:
     - str: The formatted markdown link string.
     """
     return f"[{title}]({url})"
+
 
 def markdown_code_block(code: str, caption: str = None, language: str = "") -> str:
     """Generates a markdown code block with optional language specification and caption.
@@ -102,3 +104,39 @@ def markdown_code_block(code: str, caption: str = None, language: str = "") -> s
     # Format the code block for Markdown
     markdown_code_block = f"```{markdown_language}\n{code}\n```"
     return markdown_code_block
+
+
+def markdown_convert_paragraph_styles(content: str, annotations: dict) -> str:
+    """Converts a single rich text (the attributes) styles to Markdown, ensuring that spaces at the
+    beginning or end of the content are preserved outside of the styling.
+
+    Parameters:
+    - content (str): The text content to style.
+    - annotations (dict): A dictionary containing style annotations.
+
+    Returns:
+    - str: The content styled with Markdown, preserving leading/trailing spaces.
+    """
+    # Detect and store leading and trailing spaces
+    leading_spaces = len(content) - len(content.lstrip())
+    trailing_spaces = len(content) - len(content.rstrip())
+
+    # Trim the content before applying styles
+    trimmed_content = content.strip()
+
+    # Apply Markdown styles based on annotations
+    if annotations.get("bold", False):
+        trimmed_content = f"**{trimmed_content}**"
+    if annotations.get("italic", False):
+        trimmed_content = f"*{trimmed_content}*"
+    if annotations.get("strikethrough", False):
+        trimmed_content = f"~~{trimmed_content}~~"
+    if annotations.get("underline", False):
+        # Markdown doesn't officially support underline, so it's omitted or can use HTML
+        trimmed_content = f"<u>{trimmed_content}</u>"
+    if annotations.get("code", False):
+        trimmed_content = f"`{trimmed_content}`"
+
+    # Re-add leading and trailing spaces
+    styled_content = f"{' ' * leading_spaces}{trimmed_content}{' ' * trailing_spaces}"
+    return styled_content
