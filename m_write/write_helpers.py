@@ -31,11 +31,3 @@ def is_page(blocks, block_id):
         if block['id'] == block_id:
             return block['type'] == 'child_page'
     return False
-
-def get_pages(blocks):
-    """Extracts child pages from blocks and sorts them by the depth of their path."""
-    # Filter only child pages
-    pages = [block for block in blocks if block['type'] == 'child_page']
-    # Sort pages by path length, then by path value for equal lengths
-    pages.sort(key=lambda x: (len(x['path'].split('/')), x['path']))
-    return pages

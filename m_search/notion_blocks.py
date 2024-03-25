@@ -74,7 +74,7 @@ def add_parent_hierarchy(
     parent_type = block.get("type")
 
     if root_block_id and block["id"] != root_block_id and root_block_parent_id:
-        parent_hierarchy.insert(0, {"block_id": root_block_parent_id, "type": "root"})
+        parent_hierarchy.insert(0, {"block_id": root_block_parent_id, "type": "child_page"})
 
     # Normalize block_id before comparison
     normalized_parent_id = parent_id.replace("-", "") if parent_id else None
