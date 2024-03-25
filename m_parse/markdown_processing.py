@@ -229,8 +229,6 @@ def parse_child_page(block: ChildPageBlock):
     page_details = fetch_page_details(block.id)
     changelog = get_page_changelog(page_details)
     path_hierarchy = calculate_path_on_hierarchy(block)
-    pretty_print(block.id, "block.id")
-    pretty_print(block.root_block_id, "block.root_block_id")
     # We need to normalize because notion understands the id with or without the hyphen
     # However, the user may copy the ID from the UI and it will be different
     # From Notion perspective, the ID is the same for bc3caa74-66ba-4cd1-bfcd-02f18521903e and bc3caa7466ba4cd1bfcd02f18521903e
@@ -240,7 +238,7 @@ def parse_child_page(block: ChildPageBlock):
         if normalize_string(block.id) != block.root_block_id
         else path_hierarchy
     )
-    pretty_print(changelog_path_hierarchy, "changelog_path_hierarchy")
+
     page_processed_blocks.append(
         parsing_block_return(
             block.id, markdown_headings(block.child_page.title), block.type, path_hierarchy

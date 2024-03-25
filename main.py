@@ -71,7 +71,7 @@ def main():
     blocks = fetch_and_process_block_hierarchy(args.page_id)
     pretty_print(blocks, "Fetched blocks")
     processed_blocks = dispatch_blocks_parsing(blocks)
-    pretty_print(processed_blocks)
+    pretty_print(processed_blocks, "Processed blocks")
     process_and_write(processed_blocks, args.outputs_dir)
     # pretty_print(children_blocks)
     # page_details = fetch_page_details(notion, args.page_id)

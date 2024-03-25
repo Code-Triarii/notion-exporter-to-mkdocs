@@ -44,7 +44,7 @@ def get_md_content(block):
 
 
 def is_root_page(block):
-    """Checks if a block is a root page.
+    """Checks if a block part of the root page.
 
     Parameters:
     - block (dict): The block to check.
@@ -52,7 +52,7 @@ def is_root_page(block):
     Returns:
     - bool: True if the block is a root page, False otherwise.
     """
-    return block.get("type") == "child_page" and len(block["path"].split("/")) == 1
+    return len(block["path"].split("/")) == 1
 
 
 def get_root_path(blocks):
@@ -106,14 +106,11 @@ def rename_to_pages(blocks, root_path):
         else:
             new_path = []
             for i, item in enumerate(block["path"].split("/")):
-                if i == 0:
-                    new_path.append(root_path["name"])
-                else:
-                    calculated_name = get_item_name(blocks, item)
-                    # To ignore scenarios when parent is not a page (expected)
-                    if calculated_name == "":
-                        continue
-                    new_path.append(calculated_name)
+                calculated_name = get_item_name(blocks, item)
+                # To ignore scenarios when parent is not a page (expected)
+                if calculated_name == "":
+                    continue
+                new_path.append(calculated_name)
             rename_block["path"] = "/".join(new_path)
             if block["type"] == "child_page":
                 rename_block["name"] = normalize_string(get_md_content(block))
