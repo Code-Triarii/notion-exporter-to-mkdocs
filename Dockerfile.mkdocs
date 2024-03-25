@@ -17,6 +17,6 @@ COPY wiki_processed_files/* /app/docs/
 COPY mkdocs/mkdocs.yml /app/mkdocs.yml
 COPY mkdocs/entrypoint.sh /app/entrypoint.sh
 
-RUN chmod +x /app/entrypoint.sh	
+RUN chmod +x /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
