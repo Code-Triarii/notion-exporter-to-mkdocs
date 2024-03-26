@@ -1,6 +1,8 @@
 """Auxiliary functions for fetching Notion pages."""
 
-from m_config.notion_client import notion_client
+import time
+
+from m_config.notion_client import notion_client, notion_request_wait_time
 
 
 def fetch_page_details(page_id):
@@ -13,4 +15,5 @@ def fetch_page_details(page_id):
     Returns:
     - dict: The details of the fetched page.
     """
+    time.sleep(notion_request_wait_time)
     return notion_client.pages.retrieve(page_id=page_id) if page_id else None

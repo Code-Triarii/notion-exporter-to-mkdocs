@@ -1,6 +1,6 @@
 import os
 
-from m_aux.outputs import normalize_string, find_relative_path
+from m_aux.outputs import find_relative_path, normalize_string
 from m_aux.pretty_print import pretty_print
 
 
@@ -44,14 +44,13 @@ def get_md_content(block):
 
 
 def rename_to_pages(blocks):
-    """
-    Renames blocks to 'pages' and processes them based on their type.
+    """Renames blocks to 'pages' and processes them based on their type.
 
     This function takes a list of blocks as input. Each block is a dictionary that includes an 'id' and a 'type'.
     The function first pre processes the blocks to create a mapping of block IDs to blocks.
 
     It then iterates over the blocks. For each block, it creates a copy and fetches its renamed path.
-    The renamed path is a string of block names separated by slashes ("/"), which is fetched by calling the 
+    The renamed path is a string of block names separated by slashes ("/"), which is fetched by calling the
     'get_renamed_path' function with the block ID.
 
     The function then processes the block based on its type by calling the 'process_block_type' function.

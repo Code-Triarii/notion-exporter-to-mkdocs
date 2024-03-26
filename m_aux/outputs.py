@@ -54,17 +54,16 @@ def normalize_string(name):
 
 
 def find_relative_path(from_path, to_path):
-    """
-    Finds the relative path from one path to another.
-    
+    """Finds the relative path from one path to another.
+
     :param from_path: The starting path.
     :param to_path: The target path.
     :return: The relative path from the start to the target.
     """
     # Split paths into components
-    from_parts = from_path.split('/')
-    to_parts = to_path.split('/')
-    
+    from_parts = from_path.split("/")
+    to_parts = to_path.split("/")
+
     # Find the common prefix length
     common_length = 0
     for from_part, to_part in zip(from_parts, to_parts):
@@ -72,12 +71,12 @@ def find_relative_path(from_path, to_path):
             common_length += 1
         else:
             break
-    
+
     # Calculate the number of directory levels to go up from the from_path
     up_levels = len(from_parts) - common_length
-    
+
     # Construct the relative path
-    relative_parts = ['..'] * up_levels + to_parts[common_length:]
-    relative_path = '/'.join(relative_parts)
-    
+    relative_parts = [".."] * up_levels + to_parts[common_length:]
+    relative_path = "/".join(relative_parts)
+
     return relative_path

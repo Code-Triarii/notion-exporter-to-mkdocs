@@ -98,8 +98,12 @@ docker build . -t notion-exporter:1.0
 2. Run docker image:
 
 ```bash
-docker run -it --name notion-exporter --rm -v $(pwd):/app --user $(id -u):$(id -g) -e NOTION_TOKEN="" notion-exporter:1.0 list all -p bc3caa74-66ba-4cd1-bfcd-02f18521903e
+docker run -it --name notion-exporter --rm -v $(pwd):/app --user $(id -u):$(id -g) -e NOTION_TOKEN="" -e NOTION_REQUEST_WAIT_TIME="500" notion-exporter:1.0 list all -p bc3caa74-66ba-4cd1-bfcd-02f18521903e
 ```
+
+> \[!TIP\]
+> You can *play* with the `NOTION_REQUEST_WAIT_TIME (in ms)` value. This will set the delay in between requests to the API. Notice that Notion allows
+> on average 3 requests per second by the integration. Therefore, to not get blocked the **bare minimum wait time should be 333** theoretically.
 
 3. After the assets have been generated from Notion if everything went well, you can build the mkdocs image:
 
@@ -140,7 +144,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 For quick development set-up leveraging Docker, you can use the build image and run it eternally:
 
 ```bash
-docker run -it --name notion-exporter --rm -v $(pwd):/app --user $(id -u):$(id -g) -e NOTION_TOKEN="" --entrypoint sh notion-exporter:1.0
+docker run -it --name notion-exporter --rm -v $(pwd):/app --user $(id -u):$(id -g) -e NOTION_TOKEN="" -e NOTION_REQUEST_WAIT_TIME="500" --entrypoint sh notion-exporter:1.0
 ```
 
 If you need to install additional dependencies, you can access the container in a different terminal with `root` permissions:

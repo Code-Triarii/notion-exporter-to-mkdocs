@@ -1,6 +1,8 @@
 """Auxiliary functions to work with Notion API blocks."""
+import time
+
 from m_aux.pretty_print import pretty_print
-from m_config.notion_client import notion_client
+from m_config.notion_client import notion_client, notion_request_wait_time
 
 
 def fetch_and_process_block_hierarchy(root_block_id):
@@ -112,6 +114,7 @@ def get_all_children_blocks(page_id: str):
     has_more = True
 
     while has_more:
+        time.sleep(notion_request_wait_time)
         response = notion_client.blocks.children.list(block_id=page_id, start_cursor=start_cursor)
         all_blocks.extend(response.get("results", []))
         start_cursor = response.get("next_cursor")

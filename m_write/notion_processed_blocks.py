@@ -7,9 +7,9 @@ from m_aux.pretty_print import pretty_print
 from m_write.write_helpers import (
     ensure_dir,
     get_last_path_occurrence,
+    process_block_type,
     rename_to_pages,
     write_or_append_md_file,
-    process_block_type,
 )
 
 

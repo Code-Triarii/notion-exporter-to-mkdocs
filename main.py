@@ -1,5 +1,4 @@
 import argparse
-import os
 
 from m_aux.outputs import prepare_output_folder
 from m_aux.pretty_print import pretty_print
