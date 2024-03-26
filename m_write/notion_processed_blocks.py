@@ -10,6 +10,7 @@ from m_write.write_helpers import (
     get_root_path,
     rename_to_pages,
     write_or_append_md_file,
+    preprocess_blocks
 )
 
 
@@ -21,8 +22,9 @@ def process_and_write(blocks, root_dir):
     blocks.sort(key=lambda x: x["path"].count("/"))
     # This is the parent of the root passed as parameter from CLI if any
     root_path = get_root_path(blocks)
-    renamed_blocks = rename_to_pages(blocks, root_path)
-    pretty_print(renamed_blocks, "renamed_blocks")
+    renamed_blocks_by_id, renamed_blocks = preprocess_blocks(rename_to_pages(blocks, root_path))
+    pretty_print(renamed_blocks_by_id, "renamed_blocks_by_id")
+
 
     for block in renamed_blocks:
         # Creates the appropriate directory structure and files based on pages only

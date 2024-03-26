@@ -53,7 +53,7 @@ def calculate_path_on_hierarchy(block: Block) -> str:
 
     # Filter for parents that are of type 'child_page' and collect their block_ids
     page_parents = [
-        value.block_id for key, value in dynamic_parents.items() if value.type == "child_page"
+        normalize_string(value.block_id) for key, value in dynamic_parents.items() if value.type == "child_page"
     ]
 
     # Construct the path from filtered parent pages
@@ -111,14 +111,14 @@ def parsing_block_return(block_id: str, md: str, item_type: str, path: str) -> d
     """Returns a dictionary with the block id and markdown content.
 
     Parameters:
-    - block_id (str): The ID of the block.
+    - block_id (str): The ID of the block. Normalized for future comparisons.
     - md (str): The markdown content generated for the block.
     - path (str): The calculated path for the block.
 
     Returns:
     - dict: A dictionary containing the block ID and markdown content.
     """
-    return {"id": block_id, "md": md, "type": item_type, "path": path}
+    return {"id": normalize_string(block_id), "md": md, "type": item_type, "path": path}
 
 
 ##################################################
@@ -254,7 +254,7 @@ def parse_child_page(block: ChildPageBlock):
         )
     )
     page_processed_blocks.append(
-        parsing_block_return(block.id, changelog, "changelog", changelog_path_hierarchy)
+        parsing_block_return(f"{block.id}-changelog", changelog, "changelog", changelog_path_hierarchy)
     )
     return page_processed_blocks
 
@@ -340,11 +340,9 @@ def parse_link_to_page(block: LinkToPageBlock):
     referenced_page = fetch_page_details(block.link_to_page.page_id)
     url = referenced_page.get("url")
     page_name = normalize_string(referenced_page.get("properties").get("Page").get("title")[0].get("plain_text"))
-    pretty_print(referenced_page, "Referenced page")
     md = markdown_link(page_name, url)
     return_block = parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
     return_block["external_url"] = url
     return_block["reference_id" ] = url.split("-")[-1]
     return_block["reference_name"] = page_name
-    pretty_print(return_block, "Return block")
     return return_block

@@ -51,6 +51,7 @@ def is_in_blocks_dict_by_id(blocks, block_id: str, block_type: str = None):
 
 def is_root_page(block):
     """Checks if a block part of the root page.
+    Before renaming
 
     Parameters:
     - block (dict): The block to check.
@@ -63,6 +64,7 @@ def is_root_page(block):
 
 def get_root_path(blocks):
     """Fetches the root path of the blocks.
+    Before renaming
 
     Parameters:
     - blocks (list): The blocks to fetch the root path for.
@@ -76,7 +78,7 @@ def get_root_path(blocks):
     return {}
 
 
-def get_item_name(blocks, block_id):
+def get_item_name(blocks_by_id, block_id):
     # TODO: Refactor name to be less confusing because this is not retrieving names for all types of items
     """Fetches the name of an item from the blocks.
 
@@ -87,9 +89,11 @@ def get_item_name(blocks, block_id):
     Returns:
     - str: The name of the item.
     """
-    for block in blocks:
-        if normalize_string(block["id"]) == normalize_string(block_id):
-            return normalize_string(get_md_content(block))
+    pretty_print(block_id, "blocks_by_id in get name")
+    block = blocks_by_id.get(block_id)
+    pretty_print(block, "block in get name")
+    if block:
+        return normalize_string(get_md_content(block))
     return ""
 
 
@@ -103,8 +107,9 @@ def rename_to_pages(blocks, root_path):
     Returns:
     - list: The renamed blocks.
     """
+    blocks_by_id, _blocks = preprocess_blocks(blocks)
     renamed_blocks = []
-    for block in blocks:
+    for block in _blocks:
         rename_block = block.copy()
         if is_root_page(block):
             rename_block["path"] = root_path["name"]
@@ -112,7 +117,7 @@ def rename_to_pages(blocks, root_path):
         else:
             new_path = []
             for item in block["path"].split("/"):
-                calculated_name = get_item_name(blocks, item)
+                calculated_name = get_item_name(blocks_by_id, item)
                 # To ignore scenarios when parent is not a page (expected)
                 if calculated_name == "":
                     continue
@@ -122,6 +127,14 @@ def rename_to_pages(blocks, root_path):
                 rename_block["name"] = normalize_string(get_md_content(block))
         renamed_blocks.append(rename_block)
     return renamed_blocks
+
+def preprocess_blocks(blocks):
+    """
+    Preprocess blocks to create a mapping by ID and a list of root blocks.
+    """
+    blocks_by_id = {block["id"]: block for block in blocks}
+    return blocks_by_id, blocks
+
 
 
 def get_last_path_occurrence(input_path: str):
@@ -135,9 +148,3 @@ def get_last_path_occurrence(input_path: str):
     """
     return input_path.split("/")[-1]
 
-def link_to_page_update(blocks, block):
-    """Updates the link based on if the linked page is in the automation export or external"""
-    if not is_in_blocks_dict_by_id(blocks, block["reference_id"],"child_page"):
-        return block_id
-    else:
-        return get_item_name(blocks, block_id)
