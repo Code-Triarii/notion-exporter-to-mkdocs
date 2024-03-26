@@ -2,6 +2,8 @@ import os
 import re
 import shutil
 
+import requests
+
 
 def is_folder(path):
     """Check if the given path points to a folder.
@@ -80,3 +82,40 @@ def find_relative_path(from_path, to_path):
     relative_path = "/".join(relative_parts)
 
     return relative_path
+
+
+def download_and_save_image_or_video(url: str, type: str, dest_file: str):
+    """Downloads content from a URL and saves it to a specific path with an appropriate extension.
+
+    Parameters:
+    - url (str): The URL to download the content from.
+    - type (str): The type of the content ('image' or 'video').
+    - dest_file (str): The destination path to save the content, without the file extension.
+
+    Raises:
+    - ValueError: If the type is not 'image' or 'video'.
+    - requests.RequestException: For issues encountered during the request for downloading the content.
+    """
+    # Validate the type
+    if type not in ["image", "video"]:
+        raise ValueError("Type must be either 'image' or 'video'")
+
+    # Determine the file extension based on the type
+    extension = ".png" if type == "image" else ".mp4"
+    full_path = f"{dest_file}{extension}"
+
+    # Make the request and check for a successful response
+    try:
+        response = requests.get(url, stream=True, timeout=180)
+        response.raise_for_status()  # Will raise an exception for 4XX/5XX responses
+
+        # Save the content to the specified file
+        with open(full_path, "wb") as file:
+            for chunk in response.iter_content(chunk_size=8192):
+                file.write(chunk)
+
+        print(f"Content downloaded and saved to {full_path}")
+        return True
+    except requests.RequestException as e:
+        print(f"Failed to download content from {url}: {e}")
+    return False

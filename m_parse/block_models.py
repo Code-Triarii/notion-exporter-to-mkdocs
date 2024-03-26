@@ -86,6 +86,17 @@ class BulletedListItemBlock(BaseModel):
     color: str
 
 
+class VideoFile(BaseModel):
+    url: str
+    expiry_time: str
+
+
+class VideoBlock(BaseModel):
+    caption: List[RichText]
+    type: str
+    file: VideoFile
+
+
 class Block(BaseModel):
     object: str
     id: str
@@ -102,6 +113,7 @@ class Block(BaseModel):
     bookmark: Optional[BookmarkBlock] = None
     embed: Optional[EmbedBlock] = None
     bulleted_list_item: Optional[BulletedListItemBlock] = None
+    video: Optional[VideoBlock] = None
     # Add other fields and types as necessary
     dynamic_parents: Dict[str, ParentReference] = Field(default_factory=dict)
 

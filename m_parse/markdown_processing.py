@@ -14,6 +14,7 @@ from m_parse.block_models import (
     LinkToPageBlock,
     ParagraphBlock,
     QuoteBlock,
+    VideoBlock,
     validate_block,
 )
 from m_parse.markdown_processing_helpers import (
@@ -21,7 +22,7 @@ from m_parse.markdown_processing_helpers import (
     markdown_code_block,
     markdown_convert_paragraph_styles,
     markdown_headings,
-    markdown_image,
+    markdown_image_or_video,
     markdown_link,
     markdown_note_with_heading,
     markdown_table,
@@ -272,13 +273,41 @@ def parse_image(block: ImageBlock) -> str:
     """Parses an image block into a Markdown image link."""
     image_url = block.image.file.url
     caption = (
-        " ".join([rt.plain_text for rt in block.image.caption]) if block.image.caption else ""
+        " ".join([rt.plain_text for rt in block.image.caption])
+        if block.image.caption
+        else "linked image"
     )
 
     # Convert to Markdown image syntax
-    md = markdown_image(image_url, caption)
+    md = markdown_image_or_video(image_url, caption)
 
-    return parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
+    return_block = parsing_block_return(
+        block.id, md, block.type, calculate_path_on_hierarchy(block)
+    )
+    return_block["external_url"] = image_url
+    return_block["caption"] = caption
+    return return_block
+
+
+@validate_block(VideoBlock)
+def parse_video(block: VideoBlock) -> str:
+    """Parses an video block into a Markdown image link."""
+    video_url = block.video.file.url
+    caption = (
+        " ".join([rt.plain_text for rt in block.video.caption])
+        if block.video.caption
+        else "linked video"
+    )
+
+    # Convert to Markdown image syntax
+    md = markdown_image_or_video(video_url, caption)
+
+    return_block = parsing_block_return(
+        block.id, md, block.type, calculate_path_on_hierarchy(block)
+    )
+    return_block["external_url"] = video_url
+    return_block["caption"] = caption
+    return return_block
 
 
 @validate_block(BookmarkBlock)

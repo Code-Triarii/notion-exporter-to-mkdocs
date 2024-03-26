@@ -54,7 +54,7 @@ def update_mkdocs_nav(mkdocs_yml_path, nav_structure):
     with open(mkdocs_yml_path) as file:
         mkdocs_config = yaml.safe_load(file)
 
-    mkdocs_config["nav"] = nav_structure
+    mkdocs_config["theme"]["nav"] = nav_structure
 
     with open(mkdocs_yml_path, "w") as file:
         yaml.safe_dump(mkdocs_config, file, default_flow_style=False, sort_keys=False)

@@ -169,7 +169,7 @@ def markdown_note_with_heading(content: str, heading: str) -> str:
     return markdown_note
 
 
-def markdown_image(image_url: str, caption: str = "") -> str:
+def markdown_image_or_video(image_url: str, caption: str = "") -> str:
     """Generates a Markdown image link with an optional caption.
 
     Parameters:

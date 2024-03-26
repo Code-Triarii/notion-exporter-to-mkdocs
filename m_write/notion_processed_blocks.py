@@ -23,7 +23,7 @@ def process_and_write(blocks, root_dir):
     pretty_print(renamed_blocks, "Renamed Blocks")
 
     for block in renamed_blocks:
-        block = process_block_type(renamed_blocks_id, block)
+        block = process_block_type(renamed_blocks_id, block, root_dir)
         # Creates the appropriate directory structure and files based on pages only
         if block.get("type") == "child_page":
             # If the path and md matches, then it is the root

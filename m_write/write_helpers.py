@@ -1,6 +1,11 @@
 import os
+import uuid
 
-from m_aux.outputs import find_relative_path, normalize_string
+from m_aux.outputs import (
+    download_and_save_image_or_video,
+    find_relative_path,
+    normalize_string,
+)
 from m_aux.pretty_print import pretty_print
 
 
@@ -151,11 +156,13 @@ def get_last_path_occurrence(input_path: str):
 ##################################################
 
 
-def process_block_type(blocks_by_id, block):
+def process_block_type(blocks_by_id, block, root_dir):
     """Dispatches the block to the appropriate processing function based on its type."""
     # Map of block types to their processing functions
     type_processing_map = {
         "link_to_page": process_link_to_page,
+        "video": process_image_or_video,
+        "image": process_image_or_video,
     }
 
     # Get the processing function from the map using the block's type
@@ -163,12 +170,12 @@ def process_block_type(blocks_by_id, block):
 
     # If a processing function is found, call it, otherwise return the block unchanged
     if process_func:
-        return process_func(blocks_by_id, block)
+        return process_func(blocks_by_id, block, root_dir)
     else:
         return block
 
 
-def process_link_to_page(blocks_by_id, block):
+def process_link_to_page(blocks_by_id, block, root_dir):
     """Processes a 'link_to_page' block."""
     reference_block_id = block.get("external_url")
     if reference_block_id:
@@ -179,4 +186,20 @@ def process_link_to_page(blocks_by_id, block):
             block[
                 "md"
             ] = f"[{reference_block['name']}]({relative_path}/{reference_block['name']}.md)"
+    return block
+
+
+def process_image_or_video(blocks_by_id, block, root_dir):
+    pretty_print(block, "Processing Image or Video")
+    caption = block.get("caption")
+    extension = "png" if block.get("type") == "image" else "mp4"
+    if caption in [None, "linked video", "linked image"]:
+        caption = str(uuid.uuid4())
+    prefix = caption if block.get("type") == "image" else "type:video"
+    if download_and_save_image_or_video(
+        block.get("external_url"),
+        block.get("type"),
+        f'{root_dir}/{block.get("named_path")}/{caption}',
+    ):
+        block["md"] = f"![{prefix}](./{caption}.{extension})"
     return block

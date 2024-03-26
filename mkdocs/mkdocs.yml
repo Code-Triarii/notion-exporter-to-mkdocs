@@ -1,4 +1,7 @@
 site_name: MKDOCS_SITE_NAME
 site_url: MKDOCS_SITE
-theme: readthedocs
+theme:
+  name: material
 dev_addr: MKDOCS_INTERFACE:MKDOCS_PORT
+plugins:
+  - mkdocs-video
