@@ -49,4 +49,5 @@ def normalize_string(name):
     name = re.sub(r"\s+", "-", name)  # Spaces to dashes
     name = re.sub(r"[^\w\-]", "", name)  # Remove non-word characters except dashes
     name = name.strip("-")  # Trim leading and trailing dashes
+    name = name.replace("-", "")  # Replace remaining dashes with nothing
     return name.lower()

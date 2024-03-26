@@ -182,9 +182,13 @@ def parse_heading_3(block: Heading3Block):
 
 @validate_block(CodeBlock)
 def parse_code(block: CodeBlock):
+    try:
+        caption = block.code.caption[0].text["content"]
+    except IndexError:
+        caption = ""
     md = markdown_code_block(
         code=block.code.rich_text[0].text["content"],
-        caption=block.code.caption[0].text["content"],
+        caption=caption,
         language=block.code.language,
     )
     return parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))

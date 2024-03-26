@@ -81,7 +81,7 @@ def get_item_name(blocks, block_id):
     - str: The name of the item.
     """
     for block in blocks:
-        if block["id"] == block_id:
+        if normalize_string(block["id"]) == normalize_string(block_id):
             return normalize_string(get_md_content(block))
     return ""
 
@@ -100,12 +100,11 @@ def rename_to_pages(blocks, root_path):
     for block in blocks:
         rename_block = block.copy()
         if is_root_page(block):
-            print("root page")
             rename_block["path"] = root_path["name"]
             rename_block["name"] = root_path["name"]
         else:
             new_path = []
-            for i, item in enumerate(block["path"].split("/")):
+            for item in block["path"].split("/"):
                 calculated_name = get_item_name(blocks, item)
                 # To ignore scenarios when parent is not a page (expected)
                 if calculated_name == "":
