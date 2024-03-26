@@ -182,11 +182,9 @@ def markdown_image_or_video(image_url: str, caption: str = "") -> str:
     return f"![{caption}]({image_url})"
 
 
-def markdown_bullet(content: str, annotations: dict, indent: int = 0) -> str:
+def markdown_bullet(content: str, indent: int = 0) -> str:
     """Generates a markdown bullet list item with optional indentation and styles."""
-    # Convert styles for the bullet content
-    styled_content = markdown_convert_paragraph_styles(content, annotations)
     # Calculate the indentation spaces
     indent_spaces = "    " * indent
     # Combine to form the markdown bullet item
-    return f"{indent_spaces}- {styled_content}"
+    return f"{indent_spaces}- {content}"

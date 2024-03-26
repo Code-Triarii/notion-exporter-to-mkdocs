@@ -150,6 +150,25 @@ def parse_paragraph(block: ParagraphBlock) -> str:
         block.id, markdown_paragraph, block.type, calculate_path_on_hierarchy(block)
     )
 
+@validate_block(BulletedListItemBlock)
+def parse_bulleted_list_item(block: Block) -> dict:
+    """Parses a bulleted list item block into Markdown format, considering indentation and
+    styles."""
+    bullet_items = []
+    # Get the path hierarchy and calculate the indentation level
+    # For this, it "removes" from the calculation those parts of hierarchy that are pages (do not count for indentation)
+    path_hierarchy = calculate_path_on_hierarchy(block)
+    count_parents = get_items_in_hierarchy(block.dynamic_parents)
+    indent_level = count_parents - len(path_hierarchy.split("/"))
+    for rich_text_item in block.bulleted_list_item.rich_text:
+        content = rich_text_item.plain_text
+        annotations = rich_text_item.annotations
+        
+        bullet_items.append(markdown_convert_paragraph_styles(content, annotations))
+
+    md = markdown_bullet(" ".join(bullet_items),indent=indent_level)
+
+    return parsing_block_return(block.id, md, block.type, path_hierarchy)
 
 @validate_block(Heading1Block)
 def parse_heading_1(block: Heading1Block):
@@ -345,26 +364,6 @@ def parse_embed(block: Block) -> dict:
     return parsing_block_return(
         block.id, markdown_embed, block.type, calculate_path_on_hierarchy(block)
     )
-
-
-@validate_block(BulletedListItemBlock)
-def parse_bulleted_list_item(block: Block) -> dict:
-    """Parses a bulleted list item block into Markdown format, considering indentation and
-    styles."""
-    bullet_items = []
-    # Get the path hierarchy and calculate the indentation level
-    # For this, it "removes" from the calculation those parts of hierarchy that are pages (do not count for indentation)
-    path_hierarchy = calculate_path_on_hierarchy(block)
-    count_parents = get_items_in_hierarchy(block.dynamic_parents)
-    indent_level = count_parents - len(path_hierarchy.split("/"))
-    for rich_text_item in block.bulleted_list_item.rich_text:
-        content = rich_text_item.plain_text
-        annotations = rich_text_item.annotations
-        bullet_items.append(markdown_bullet(content, annotations, indent=indent_level))
-
-    md = "\n".join(bullet_items)
-
-    return parsing_block_return(block.id, md, block.type, path_hierarchy)
 
 
 @validate_block(LinkToPageBlock)
