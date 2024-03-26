@@ -62,6 +62,11 @@ def calculate_path_on_hierarchy(block: Block) -> str:
     return path
 
 
+def get_items_in_hierarchy(dynamic_parents: dict) -> int:
+    """Fetches the number of items in the block hierarchy."""
+    return sum(1 for key in dynamic_parents if key.startswith("c_parent_"))
+
+
 def get_page_changelog(page_details: dict) -> str:
     """Extracts changelog information from page details and formats it into a markdown table.
 
@@ -306,10 +311,17 @@ def parse_embed(block: Block) -> dict:
 
 
 @validate_block(BulletedListItemBlock)
-def parse_bulleted_list_item(block: Block, indent_level: int = 0) -> dict:
+def parse_bulleted_list_item(block: Block) -> dict:
     """Parses a bulleted list item block into Markdown format, considering indentation and
     styles."""
     bullet_items = []
+    # Get the path hierarchy and calculate the indentation level
+    # For this, it "removes" from the calculation those parts of hierarchy that are pages (do not count for indentation)
+    path_hierarchy = calculate_path_on_hierarchy(block)
+    count_parents = get_items_in_hierarchy(block.dynamic_parents)
+    pretty_print(count_parents, "count_parents")
+    pretty_print(path_hierarchy.split("/"), "path_hierarchy_length")
+    indent_level = count_parents - len(path_hierarchy.split("/"))
     for rich_text_item in block.bulleted_list_item.rich_text:
         content = rich_text_item.plain_text
         annotations = rich_text_item.annotations
@@ -317,7 +329,7 @@ def parse_bulleted_list_item(block: Block, indent_level: int = 0) -> dict:
 
     md = "\n".join(bullet_items)
 
-    return parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
+    return parsing_block_return(block.id, md, block.type, path_hierarchy)
 
 
 @validate_block(LinkToPageBlock)

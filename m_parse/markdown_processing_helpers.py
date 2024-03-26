@@ -187,6 +187,6 @@ def markdown_bullet(content: str, annotations: dict, indent: int = 0) -> str:
     # Convert styles for the bullet content
     styled_content = markdown_convert_paragraph_styles(content, annotations)
     # Calculate the indentation spaces
-    indent_spaces = "  " * indent
+    indent_spaces = "    " * indent
     # Combine to form the markdown bullet item
     return f"{indent_spaces}- {styled_content}"
