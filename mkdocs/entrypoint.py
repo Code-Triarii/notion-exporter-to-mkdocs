@@ -3,32 +3,33 @@ import os
 import subprocess
 import yaml
 
-def generate_nav_structure(start_path):
+def generate_nav_structure(start_path, parent_path=None):
     """
-    Generates a MkDocs navigation structure from the directory and files under start_path.
-    The first .md file found is taken as the "Home" page.
+    Recursively generates a MkDocs navigation structure from the directory and files under start_path.
     """
     nav_structure = []
-    home_added = False
-    for root, dirs, files in os.walk(start_path):
-        # Sort directories and files to ensure consistent order
-        dirs.sort()
-        files.sort()
-        # Ignore hidden files and directories
-        files = [f for f in files if not f.startswith('.')]
-        dirs = [d for d in dirs if not d.startswith('.')]
-        # Construct relative paths for markdown files
-        md_files = [os.path.join(root, f) for f in files if f.endswith('.md')]
-        md_files_relative = [os.path.relpath(f, start_path) for f in md_files]
-        if not home_added and md_files_relative:
-            nav_structure.append({'Home': md_files_relative[0]})
-            md_files_relative = md_files_relative[1:]
-            home_added = True
-        section_name = os.path.basename(root) if root != start_path else None
-        if section_name:
-            section = {section_name: md_files_relative}
-            if md_files_relative:
-                nav_structure.append(section)
+    if parent_path is None:
+        parent_path = start_path
+
+    dirs = [d for d in os.listdir(start_path) if os.path.isdir(os.path.join(start_path, d)) and not d.startswith('.')]
+    md_files = [f for f in os.listdir(start_path) if os.path.isfile(os.path.join(start_path, f)) and f.endswith('.md') and not f.startswith('.')]
+
+    md_files.sort()
+    dirs.sort()
+
+    for md_file in md_files:
+        relative_path = os.path.relpath(os.path.join(start_path, md_file), parent_path)
+        if 'Home' not in [list(item.keys())[0] for item in nav_structure]:
+            nav_structure.append({relative_path.split("/")[-1].split(".")[0]: relative_path})
+        else:
+            nav_structure.append({md_file.replace('.md', ''): relative_path})
+
+    for dir in dirs:
+        dir_path = os.path.join(start_path, dir)
+        dir_nav = generate_nav_structure(dir_path, parent_path)
+        if dir_nav:
+            nav_structure.append({dir: dir_nav})
+
     return nav_structure
 
 def update_mkdocs_nav(mkdocs_yml_path, nav_structure):

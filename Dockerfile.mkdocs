@@ -22,4 +22,6 @@ COPY mkdocs/entrypoint.py /app/entrypoint.py
 
 RUN chown -R 1000:1000 /app
 
+RUN apk add nano
+
 ENTRYPOINT ["python","/app/entrypoint.py"]
