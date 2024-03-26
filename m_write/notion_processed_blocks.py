@@ -21,7 +21,6 @@ def process_and_write(blocks, root_dir):
     blocks.sort(key=lambda x: x["path"].count("/"))
     # This is the parent of the root passed as parameter from CLI if any
     root_path = get_root_path(blocks)
-    pretty_print(root_path, "Root path")
     renamed_blocks = rename_to_pages(blocks, root_path)
     pretty_print(renamed_blocks, "renamed_blocks")
 

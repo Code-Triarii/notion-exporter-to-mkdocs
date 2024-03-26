@@ -319,8 +319,6 @@ def parse_bulleted_list_item(block: Block) -> dict:
     # For this, it "removes" from the calculation those parts of hierarchy that are pages (do not count for indentation)
     path_hierarchy = calculate_path_on_hierarchy(block)
     count_parents = get_items_in_hierarchy(block.dynamic_parents)
-    pretty_print(count_parents, "count_parents")
-    pretty_print(path_hierarchy.split("/"), "path_hierarchy_length")
     indent_level = count_parents - len(path_hierarchy.split("/"))
     for rich_text_item in block.bulleted_list_item.rich_text:
         content = rich_text_item.plain_text
@@ -334,6 +332,19 @@ def parse_bulleted_list_item(block: Block) -> dict:
 
 @validate_block(LinkToPageBlock)
 def parse_link_to_page(block: LinkToPageBlock):
-    # TODO: Implement this function
-    md = "[Linked Page](https://www.notion.so/hell)"
-    return parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
+    """Parses a link to page block into a Markdown link.
+    It also fetches the page details and adds additional information to the block.
+    This will allow later to evaluate if the page referenced is inside the blocks export
+    If it is, then it will be processed as a child page, otherwise, it will be processed as a link to an external page.
+    """
+    referenced_page = fetch_page_details(block.link_to_page.page_id)
+    url = referenced_page.get("url")
+    page_name = normalize_string(referenced_page.get("properties").get("Page").get("title")[0].get("plain_text"))
+    pretty_print(referenced_page, "Referenced page")
+    md = markdown_link(page_name, url)
+    return_block = parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
+    return_block["external_url"] = url
+    return_block["reference_id" ] = url.split("-")[-1]
+    return_block["reference_name"] = page_name
+    pretty_print(return_block, "Return block")
+    return return_block

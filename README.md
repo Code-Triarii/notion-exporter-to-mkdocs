@@ -157,9 +157,10 @@ This way you would be able to develop without having to concern about dependenci
 
 - Functionality:
 - [x] Export Notion wiki.
-- [ ] Parametrized execution for reusability.
+- [x] Parametrized execution for reusability.
+- [x] Indentation with 4 spaces for compatibility with [Syntax rules for python-markdown - MkDocs](https://daringfireball.net/projects/markdown/syntax#list)
 - Deployment:
-  - [ ] Bundle automation in Docker image definition.
+  - [x] Bundle automation in Docker image definition.
   - [ ] Prepare automation to deploy in kubernetes cluster with Helm.
 
 See the [open issues](https://github.com/Code-Triarii/notion-exporter-to-mkdocs/issues) for a full list of proposed features (and known issues).

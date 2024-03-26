@@ -42,6 +42,12 @@ def get_md_content(block):
     """
     return block.get("md", "")
 
+def is_in_blocks_dict_by_id(blocks, block_id: str, block_type: str = None):
+    """Checks if a block is in a list of blocks by its ID."""
+    if block_type:
+        return any(block_id == block["id"] and block_type == block["type"] for block in blocks)
+    return any(block_id == block["id"] for block in blocks)
+
 
 def is_root_page(block):
     """Checks if a block part of the root page.
@@ -71,6 +77,7 @@ def get_root_path(blocks):
 
 
 def get_item_name(blocks, block_id):
+    # TODO: Refactor name to be less confusing because this is not retrieving names for all types of items
     """Fetches the name of an item from the blocks.
 
     Parameters:
@@ -127,3 +134,10 @@ def get_last_path_occurrence(input_path: str):
     - str: The last occurrence of the path.
     """
     return input_path.split("/")[-1]
+
+def link_to_page_update(blocks, block):
+    """Updates the link based on if the linked page is in the automation export or external"""
+    if not is_in_blocks_dict_by_id(blocks, block["reference_id"],"child_page"):
+        return block_id
+    else:
+        return get_item_name(blocks, block_id)
