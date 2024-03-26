@@ -42,62 +42,8 @@ def get_md_content(block):
     """
     return block.get("md", "")
 
-def is_in_blocks_dict_by_id(blocks, block_id: str, block_type: str = None):
-    """Checks if a block is in a list of blocks by its ID."""
-    if block_type:
-        return any(block_id == block["id"] and block_type == block["type"] for block in blocks)
-    return any(block_id == block["id"] for block in blocks)
 
-
-def is_root_page(block):
-    """Checks if a block part of the root page.
-    Before renaming
-
-    Parameters:
-    - block (dict): The block to check.
-
-    Returns:
-    - bool: True if the block is a root page, False otherwise.
-    """
-    return len(block["path"].split("/")) == 1
-
-
-def get_root_path(blocks):
-    """Fetches the root path of the blocks.
-    Before renaming
-
-    Parameters:
-    - blocks (list): The blocks to fetch the root path for.
-
-    Returns:
-    - dict: The root path of the blocks.
-    """
-    for block in blocks:
-        if is_root_page(block):
-            return {"id": block["path"], "name": normalize_string(get_md_content(block))}
-    return {}
-
-
-def get_item_name(blocks_by_id, block_id):
-    # TODO: Refactor name to be less confusing because this is not retrieving names for all types of items
-    """Fetches the name of an item from the blocks.
-
-    Parameters:
-    - blocks (list): The blocks to fetch the item name from.
-    - block_id (str): The ID of the item to fetch the name for.
-
-    Returns:
-    - str: The name of the item.
-    """
-    pretty_print(block_id, "blocks_by_id in get name")
-    block = blocks_by_id.get(block_id)
-    pretty_print(block, "block in get name")
-    if block:
-        return normalize_string(get_md_content(block))
-    return ""
-
-
-def rename_to_pages(blocks, root_path):
+def rename_to_pages(blocks):
     """Renames blocks to 'pages'.
 
     Parameters:
@@ -110,31 +56,70 @@ def rename_to_pages(blocks, root_path):
     blocks_by_id, _blocks = preprocess_blocks(blocks)
     renamed_blocks = []
     for block in _blocks:
+        # Process the block based on its type
         rename_block = block.copy()
-        if is_root_page(block):
-            rename_block["path"] = root_path["name"]
-            rename_block["name"] = root_path["name"]
-        else:
-            new_path = []
-            for item in block["path"].split("/"):
-                calculated_name = get_item_name(blocks_by_id, item)
-                # To ignore scenarios when parent is not a page (expected)
-                if calculated_name == "":
-                    continue
-                new_path.append(calculated_name)
-            rename_block["path"] = "/".join(new_path)
-            if block["type"] == "child_page":
-                rename_block["name"] = normalize_string(get_md_content(block))
+        rename_block["named_path"] = get_renamed_path(blocks_by_id, block["id"])
+        rename_block = process_block_type(blocks_by_id, rename_block)
         renamed_blocks.append(rename_block)
-    return renamed_blocks
+    return preprocess_blocks(renamed_blocks)
+
 
 def preprocess_blocks(blocks):
+    """Preprocess blocks to create a mapping by ID and a list of root blocks.
+
+    Ensures the parent root block (the one above the automation if it does exist) is inserted as
+    well for further checks and easy access
     """
-    Preprocess blocks to create a mapping by ID and a list of root blocks.
-    """
-    blocks_by_id = {block["id"]: block for block in blocks}
+    blocks_by_id = {}
+    for block in blocks:
+        # The empty check handles the "edge case" of non-parent root (the root of your wiki in Notion)
+        # This adds trace of "parent_root_block" so it is ignored in the writing process
+        if block.get("root") and block.get("path") != "" and block.get("type") == "child_page":
+            parent_root_block = block.copy()
+            parent_root_block["id"] = parent_root_block["path"]
+            parent_root_block["type"] = "parent_root_page"
+            blocks_by_id[block["path"]] = parent_root_block
+
+        blocks_by_id[block["id"]] = block
     return blocks_by_id, blocks
 
+
+def get_renamed_path(blocks_by_id, block_id):
+    """Fetches the renamed path for a block by its ID.
+
+    This function takes a dictionary mapping block IDs to blocks and a block ID as input.
+    It then fetches the block corresponding to the given ID and retrieves its path.
+    The path is a string of block IDs separated by slashes ("/").
+
+    The function then splits the path into individual block IDs and iterates over them.
+    For each block ID in the path, it fetches the corresponding block and checks its type.
+    If the block type is "child_page", it appends the block's name to the result path.
+    If the block type is "parent_root_page" and the path contains only one block ID,
+    it also appends the block's name to the result path.
+
+    Finally, the function joins the result path back into a string, with block names separated by slashes,
+    and returns this string.
+
+    Args:
+        blocks_by_id (dict): A dictionary mapping block IDs to blocks.
+        block_id (str): The ID of the block for which to fetch the renamed path.
+
+    Returns:
+        str: The renamed path for the block, with block names separated by slashes.
+    """
+    block = blocks_by_id.get(block_id)
+    result_path = []
+    splitted_path = block.get("path").split("/")
+
+    for path_ref in splitted_path:
+        block_ref = blocks_by_id.get(path_ref)
+        if block_ref:
+            if block_ref.get("type") == "child_page":
+                result_path.append(block_ref["name"])
+            # We would like to substitute only for the root block for the "parent_root_page" type
+            elif block_ref.get("type") == "parent_root_page" and len(splitted_path) == 1:
+                result_path.append(block_ref["name"])
+    return "/".join(result_path)
 
 
 def get_last_path_occurrence(input_path: str):
@@ -148,3 +133,30 @@ def get_last_path_occurrence(input_path: str):
     """
     return input_path.split("/")[-1]
 
+
+##################################################
+#                                                #
+#         SPECIFIC BLOCKS PROCESSING             #
+#                                                #
+##################################################
+
+
+def process_block_type(blocks_by_id, block):
+    """Dispatches the block to the appropriate processing function based on its type."""
+    # Map of block types to their processing functions
+    type_processing_map = {
+        "link_to_page": process_link_to_page,
+    }
+
+    # Get the processing function from the map using the block's type
+    process_func = type_processing_map.get(block["type"])
+
+    # If a processing function is found, call it, otherwise return the block unchanged
+    if process_func:
+        return process_func(blocks_by_id, block)
+    else:
+        return block
+
+
+def process_link_to_page(blocks_by_id, block):
+    return block

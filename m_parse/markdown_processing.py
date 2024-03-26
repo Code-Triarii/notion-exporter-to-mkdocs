@@ -53,7 +53,9 @@ def calculate_path_on_hierarchy(block: Block) -> str:
 
     # Filter for parents that are of type 'child_page' and collect their block_ids
     page_parents = [
-        normalize_string(value.block_id) for key, value in dynamic_parents.items() if value.type == "child_page"
+        normalize_string(value.block_id)
+        for key, value in dynamic_parents.items()
+        if value.type == "child_page"
     ]
 
     # Construct the path from filtered parent pages
@@ -243,18 +245,24 @@ def parse_child_page(block: ChildPageBlock):
     # From Notion perspective, the ID is the same for bc3caa74-66ba-4cd1-bfcd-02f18521903e and bc3caa7466ba4cd1bfcd02f18521903e
     # However, it always returns the ID with the hyphen when calling the API
     changelog_path_hierarchy = (
-        f"{path_hierarchy}/{block.id}"
+        f"{path_hierarchy}/{normalize_string(block.id)}"
         if normalize_string(block.id) != block.root_block_id
         else path_hierarchy
     )
+    page_block = parsing_block_return(
+        block.id, markdown_headings(block.child_page.title), block.type, path_hierarchy
+    )
+    # Including name of the page for further processing
+    page_block["name"] = normalize_string(block.child_page.title)
+    # Leaving trace of which is the root page for the execution for further processing
+    if normalize_string(block.id) == block.root_block_id:
+        page_block["root"] = True
 
+    page_processed_blocks.append(page_block)
     page_processed_blocks.append(
         parsing_block_return(
-            block.id, markdown_headings(block.child_page.title), block.type, path_hierarchy
+            f"{block.id}-changelog", changelog, "changelog", changelog_path_hierarchy
         )
-    )
-    page_processed_blocks.append(
-        parsing_block_return(f"{block.id}-changelog", changelog, "changelog", changelog_path_hierarchy)
     )
     return page_processed_blocks
 
@@ -333,16 +341,21 @@ def parse_bulleted_list_item(block: Block) -> dict:
 @validate_block(LinkToPageBlock)
 def parse_link_to_page(block: LinkToPageBlock):
     """Parses a link to page block into a Markdown link.
-    It also fetches the page details and adds additional information to the block.
-    This will allow later to evaluate if the page referenced is inside the blocks export
-    If it is, then it will be processed as a child page, otherwise, it will be processed as a link to an external page.
+
+    It also fetches the page details and adds additional information to the block. This will allow
+    later to evaluate if the page referenced is inside the blocks export If it is, then it will be
+    processed as a child page, otherwise, it will be processed as a link to an external page.
     """
     referenced_page = fetch_page_details(block.link_to_page.page_id)
     url = referenced_page.get("url")
-    page_name = normalize_string(referenced_page.get("properties").get("Page").get("title")[0].get("plain_text"))
+    page_name = normalize_string(
+        referenced_page.get("properties").get("Page").get("title")[0].get("plain_text")
+    )
     md = markdown_link(page_name, url)
-    return_block = parsing_block_return(block.id, md, block.type, calculate_path_on_hierarchy(block))
+    return_block = parsing_block_return(
+        block.id, md, block.type, calculate_path_on_hierarchy(block)
+    )
     return_block["external_url"] = url
-    return_block["reference_id" ] = url.split("-")[-1]
+    return_block["reference_id"] = url.split("-")[-1]
     return_block["reference_name"] = page_name
     return return_block
