@@ -1,6 +1,6 @@
 import os
 
-from m_aux.outputs import normalize_string
+from m_aux.outputs import normalize_string, find_relative_path
 from m_aux.pretty_print import pretty_print
 
 
@@ -44,22 +44,33 @@ def get_md_content(block):
 
 
 def rename_to_pages(blocks):
-    """Renames blocks to 'pages'.
+    """
+    Renames blocks to 'pages' and processes them based on their type.
 
-    Parameters:
-    - blocks (list): The blocks to rename.
-    - root_path (dict): The root path of the blocks.
+    This function takes a list of blocks as input. Each block is a dictionary that includes an 'id' and a 'type'.
+    The function first pre processes the blocks to create a mapping of block IDs to blocks.
+
+    It then iterates over the blocks. For each block, it creates a copy and fetches its renamed path.
+    The renamed path is a string of block names separated by slashes ("/"), which is fetched by calling the 
+    'get_renamed_path' function with the block ID.
+
+    The function then processes the block based on its type by calling the 'process_block_type' function.
+    The processed block is then appended to the list of renamed blocks.
+
+    Finally, the function pre processes the renamed blocks again to create a new mapping of block IDs to blocks,
+    and returns this mapping along with the list of renamed blocks.
+
+    Args:
+        blocks (list): The blocks to rename.
 
     Returns:
-    - list: The renamed blocks.
+        tuple: A tuple containing a dictionary mapping block IDs to blocks and a list of renamed blocks.
     """
     blocks_by_id, _blocks = preprocess_blocks(blocks)
     renamed_blocks = []
     for block in _blocks:
-        # Process the block based on its type
         rename_block = block.copy()
         rename_block["named_path"] = get_renamed_path(blocks_by_id, block["id"])
-        rename_block = process_block_type(blocks_by_id, rename_block)
         renamed_blocks.append(rename_block)
     return preprocess_blocks(renamed_blocks)
 
@@ -159,4 +170,12 @@ def process_block_type(blocks_by_id, block):
 
 
 def process_link_to_page(blocks_by_id, block):
+    """Processes a 'link_to_page' block."""
+    reference_block_id = block.get("external_url")
+    if reference_block_id:
+        # Based on Notion structure of urls. Sample: https://www.notion.so/<page-name>-328968aac13d4b19b2a6e2b9c257e05c
+        reference_block = blocks_by_id.get(reference_block_id.split("-")[-1])
+        if reference_block:
+            relative_path = find_relative_path(block["named_path"], reference_block["named_path"])
+            block["md"] = f"[{reference_block['name']}]({relative_path}/{reference_block['name']})"
     return block

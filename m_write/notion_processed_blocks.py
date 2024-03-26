@@ -7,10 +7,9 @@ from m_aux.pretty_print import pretty_print
 from m_write.write_helpers import (
     ensure_dir,
     get_last_path_occurrence,
-    get_root_path,
-    preprocess_blocks,
     rename_to_pages,
     write_or_append_md_file,
+    process_block_type,
 )
 
 
@@ -20,10 +19,11 @@ def process_and_write(blocks, root_dir):
 
     # Sort blocks by path length to ensure parent directories are created first
     blocks.sort(key=lambda x: x["path"].count("/"))
-    renamed_blocks_by_id, renamed_blocks = rename_to_pages(blocks)
-    pretty_print(renamed_blocks_by_id, "renamed_blocks_by_id")
+    renamed_blocks_id, renamed_blocks = rename_to_pages(blocks)
+    pretty_print(renamed_blocks, "Renamed Blocks")
 
     for block in renamed_blocks:
+        block = process_block_type(renamed_blocks_id, block)
         # Creates the appropriate directory structure and files based on pages only
         if block.get("type") == "child_page":
             # If the path and md matches, then it is the root
