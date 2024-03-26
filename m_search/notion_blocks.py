@@ -112,9 +112,8 @@ def get_all_children_blocks(page_id: str):
     all_blocks = []
     start_cursor = None
     has_more = True
-
+    time.sleep(notion_request_wait_time)
     while has_more:
-        time.sleep(notion_request_wait_time)
         response = notion_client.blocks.children.list(block_id=page_id, start_cursor=start_cursor)
         all_blocks.extend(response.get("results", []))
         start_cursor = response.get("next_cursor")

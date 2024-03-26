@@ -176,5 +176,5 @@ def process_link_to_page(blocks_by_id, block):
         reference_block = blocks_by_id.get(reference_block_id.split("-")[-1])
         if reference_block:
             relative_path = find_relative_path(block["named_path"], reference_block["named_path"])
-            block["md"] = f"[{reference_block['name']}]({relative_path}/{reference_block['name']})"
+            block["md"] = f"[{reference_block['name']}]({relative_path}/{reference_block['name']}.md)"
     return block
