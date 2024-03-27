@@ -140,7 +140,7 @@ def parse_paragraph(block: ParagraphBlock) -> str:
     # Convert each rich text to Markdown and add it to the list
     for rich_text in block.paragraph.rich_text:
         markdown_parts.append(
-            markdown_convert_paragraph_styles(rich_text.text["content"], rich_text.annotations)
+            markdown_convert_paragraph_styles(rich_text.text["content"], rich_text.annotations, rich_text.href)
         )
 
     # Join all parts into a single Markdown string
@@ -161,10 +161,8 @@ def parse_bulleted_list_item(block: Block) -> dict:
     count_parents = get_items_in_hierarchy(block.dynamic_parents)
     indent_level = count_parents - len(path_hierarchy.split("/"))
     for rich_text_item in block.bulleted_list_item.rich_text:
-        content = rich_text_item.plain_text
-        annotations = rich_text_item.annotations
-        
-        bullet_items.append(markdown_convert_paragraph_styles(content, annotations))
+
+        bullet_items.append(markdown_convert_paragraph_styles(rich_text_item.plain_text, rich_text_item.annotations, rich_text_item.href))
 
     md = markdown_bullet(" ".join(bullet_items),indent=indent_level)
 

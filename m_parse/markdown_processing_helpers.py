@@ -106,7 +106,7 @@ def markdown_code_block(code: str, caption: str = None, language: str = "") -> s
     return markdown_code_block
 
 
-def markdown_convert_paragraph_styles(content: str, annotations: dict) -> str:
+def markdown_convert_paragraph_styles(content: str, annotations: dict, href:str) -> str:
     """Converts a single rich text (the attributes) styles to Markdown, ensuring that spaces at the
     beginning or end of the content are preserved outside of the styling.
 
@@ -137,8 +137,9 @@ def markdown_convert_paragraph_styles(content: str, annotations: dict) -> str:
     if annotations.get("code", False):
         trimmed_content = f"`{trimmed_content}`"
 
+    trimmed_content_with_href = f"[{trimmed_content}]({href})"
     # Re-add leading and trailing spaces
-    styled_content = f"{' ' * leading_spaces}{trimmed_content}{' ' * trailing_spaces}"
+    styled_content = f"{' ' * leading_spaces}{trimmed_content_with_href if href else trimmed_content}{' ' * trailing_spaces}"
     return styled_content
 
 
