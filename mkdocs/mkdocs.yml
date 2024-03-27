@@ -1,7 +1,9 @@
 site_name: MKDOCS_SITE_NAME
 site_url: MKDOCS_SITE
+site_author: MKDOCS_AUTHOR
 theme:
   name: material
 dev_addr: MKDOCS_INTERFACE:MKDOCS_PORT
 plugins:
   - mkdocs-video
+  - search

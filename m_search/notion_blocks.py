@@ -20,7 +20,7 @@ def fetch_and_process_block_hierarchy(root_block_id):
     root_block_parent = root_block.get("parent", None)
     root_block_parent_id = (
         (root_block_parent.get("block_id") or root_block_parent.get("page_id")).strip()
-        if root_block_parent
+        if root_block_parent and root_block_parent.get("type") == "page"
         else None
     )
 

@@ -21,9 +21,6 @@ Since MkDocs is extending as powerful solution for managing wikis, we decided to
 
 </div>
 
-> \[!CAUTION\]
-> Change description Lorem ipsum for the project information
-
 <!-- TABLE OF CONTENTS -->
 
 ## 📚 Table of contents
@@ -35,7 +32,6 @@ Since MkDocs is extending as powerful solution for managing wikis, we decided to
   - [🚀 Installation and Execution](#-installation-and-execution)
     - [🔨 Prerequisites](#-prerequisites)
     - [🔧 Installation](#-installation)
-      - [Local environment](#local-environment)
       - [Docker environment](#docker-environment)
     - [💼 Usage](#-usage)
   - [Local development](#local-development)
@@ -69,21 +65,6 @@ Since MkDocs is extending as powerful solution for managing wikis, we decided to
 [🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
 ### 🔧 Installation
-
-#### Local environment
-
-1. Clone the repo
-   ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-2. Install packages
-   ```sh
-   npm install
-   ```
-3. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
 
 #### Docker environment
 
@@ -123,17 +104,8 @@ docker run -d --name mkdocs -e MKDOCS_SITE="https://example.com" -e MKDOCS_PORT=
 
 ### 💼 Usage
 
-______________________________________________________________________
-
 > \[!TIP\]
 > TOEDIT: Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-- CLI: In this case show the help and put some examples of the most interesting options
-- Web Application: if the project is a component of a broader project, link it to the main Documentation for the project usage and especify only the specific configurations for the component. Example: if this is the front end, talk about the specific options that can be configured.
-
-______________________________________________________________________
-
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 [🔝 Back to top](#-notion-wiki-exporter-to-mkdocs)
 
@@ -163,6 +135,7 @@ This way you would be able to develop without having to concern about dependenci
 - [x] Export Notion wiki.
 - [x] Parametrized execution for reusability.
 - [x] Indentation with 4 spaces for compatibility with [Syntax rules for python-markdown - MkDocs](https://daringfireball.net/projects/markdown/syntax#list)
+- [ ] Include support for databases (currently only pages and blocks)
 - Deployment:
   - [x] Bundle automation in Docker image definition.
   - [ ] Prepare automation to deploy in kubernetes cluster with Helm.
