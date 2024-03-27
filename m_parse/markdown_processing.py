@@ -238,7 +238,7 @@ def parse_quote(block: Block) -> str:
     for rich_text in block.quote.rich_text:
         # Append plain text to the note_content string
         note_content += markdown_convert_paragraph_styles(
-            rich_text.plain_text, rich_text.annotations
+            rich_text.plain_text, rich_text.annotations, rich_text.href
         )
 
     # Use the markdown_note_with_heading helper to format the entire quote
