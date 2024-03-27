@@ -106,7 +106,7 @@ def markdown_code_block(code: str, caption: str = None, language: str = "") -> s
     return markdown_code_block
 
 
-def markdown_convert_paragraph_styles(content: str, annotations: dict, href:str) -> str:
+def markdown_convert_paragraph_styles(content: str, annotations: dict, href: str) -> str:
     """Converts a single rich text (the attributes) styles to Markdown, ensuring that spaces at the
     beginning or end of the content are preserved outside of the styling.
 
